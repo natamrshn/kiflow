@@ -1,10 +1,13 @@
+import 'react-native-reanimated'; // ⚡️ цей імпорт має бути найпершим
+
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
 
+import { supabase } from '@/config/supabaseClient';
 import { useColorScheme } from '@/hooks/useColorScheme';
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -16,6 +19,8 @@ export default function RootLayout() {
     // Async font loading only occurs in development.
     return null;
   }
+
+  console.log("supabase", supabase)
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
