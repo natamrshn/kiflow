@@ -51,6 +51,7 @@ export default function LoginScreen() {
     }
   };
 
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -83,15 +84,7 @@ export default function LoginScreen() {
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-            <View style={styles.orContainer}>
-              <View style={styles.line} />
-              <Text style={styles.orText}>OR</Text>
-              <View style={styles.line} />
-            </View>
 
-            <TouchableOpacity style={styles.googleButton}>
-              <Text style={styles.googleText}>Sign in with Google</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </KeyboardAvoidingView>
