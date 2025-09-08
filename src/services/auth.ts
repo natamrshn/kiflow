@@ -1,4 +1,5 @@
 import { setTimeout } from 'timers';
+import { supabase } from '../config/supabaseClient';
 // import { supabase } from '../config/supabase';
 
 export const signUp = async (email: string, password: string) => {

@@ -1,5 +1,8 @@
-import React from 'react';
+import { signIn } from '@/src/services/auth';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Image,
   KeyboardAvoidingView,
@@ -8,11 +11,45 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 
+
+interface AuthError {
+  message?: string;
+  status?: number;
+  [key: string]: unknown;
+}
+
 export default function LoginScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
   const windowWidth = Dimensions.get('window').width;
+
+  const handleLogin = async () => {
+
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { error } = await signIn(email, password);
+      if (error) throw error;
+
+      // Navigate to home regardless of navigation state
+      router.replace('/');
+    } catch (err: unknown) {
+      const error = err as AuthError;
+      Alert.alert('Login Failed', error.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,18 +71,18 @@ export default function LoginScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              onChangeText={setEmail}
             />
             <TextInput
               placeholder="Password"
               style={styles.input}
               secureTextEntry
               autoCapitalize="none"
+              onChangeText={setPassword}
             />
-
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.buttonText}>Sign In</Text>
             </TouchableOpacity>
-
             <View style={styles.orContainer}>
               <View style={styles.line} />
               <Text style={styles.orText}>OR</Text>
