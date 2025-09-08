@@ -1,8 +1,11 @@
 // src/components/CustomHeader.tsx
+import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function CustomHeader() {
+  const router = useRouter();
+
   const defaultAvatarUrl =
     "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg";
 
@@ -16,7 +19,7 @@ export default function CustomHeader() {
   
       {/* User avatar + кнопка входу/виходу */}
       <View style={styles.actions}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/auth/login")}>
           <Text style={styles.loginText}>Login</Text>
         </TouchableOpacity>
         <Image source={{ uri: defaultAvatarUrl }} style={styles.avatar} />
