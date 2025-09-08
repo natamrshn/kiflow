@@ -1,0 +1,33 @@
+import 'react-native-reanimated'; // ⚡️ цей імпорт має бути найпершим
+
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+
+import { supabase } from '@/src/config/supabaseClient';
+import { useColorScheme } from '../hooks/useColorScheme.web';
+// import { useColorScheme } from '@/hooks/useColorScheme';
+
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  if (!loaded) {
+    // Async font loading only occurs in development.
+    return null;
+  }
+
+  console.log("supabase", supabase)
+
+  return (
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      {/* <StatusBar style="auto" /> */}
+    </ThemeProvider>
+  );
+}
