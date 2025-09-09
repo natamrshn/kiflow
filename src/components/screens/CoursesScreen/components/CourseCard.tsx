@@ -30,8 +30,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             styles.button,
             pressed && styles.buttonPressed
           ]}
-        //   onPress={() => router.push(`/course/${course.id}`)}
-        >
+          onPress={() => router.push(`/courses/${course.id}`)}
+          >
           <Text style={styles.buttonText}>ПОЧАТИ КУРС</Text>
         </Pressable>
         </HStack>
