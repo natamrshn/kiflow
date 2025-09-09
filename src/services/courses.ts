@@ -1,12 +1,11 @@
 import type { Course } from '@/src/constants/types/course';
 import { supabase } from '../config/supabaseClient';
 
-// 🔹 Отримати всі курси
 export const getCourses = async (): Promise<{ data: Course[] | null; error: any }> => {
   try {
     const { data, error } = await supabase
-      .from('courses')   // назва таблиці
-      .select('*');      // можна вказати конкретні поля, наприклад: 'id, title, description'
+      .from('courses')   
+      .select('*');  
 
 
     console.log('data', data)
