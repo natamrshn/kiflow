@@ -5,6 +5,7 @@ import { Href, useRouter } from "expo-router";
 import { LogIn, LogOut } from "lucide-react-native";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppRoute } from "../screens/HomePageScreen/NavigationButton";
 import { Button } from "./button";
 import { HStack } from "./hstack";
@@ -12,6 +13,7 @@ import { Icon } from "./icon";
 
 export default function CustomHeader() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const isGuestValue = useIsGuestUser();
   const isGuest = isGuestValue === null ? true : isGuestValue;
@@ -37,7 +39,7 @@ export default function CustomHeader() {
   };
 
   return (
-    <View style={styles.headerContainer}>
+    <View style={[styles.headerContainer, { paddingTop: insets.top }]}>
       {/* Left side: Guest label */}
       {isGuest ? (
         <HStack className="items-center justify-center rounded-md bg-gray-100 px-3 py-1">
