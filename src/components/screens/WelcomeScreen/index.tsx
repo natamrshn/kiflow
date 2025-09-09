@@ -33,7 +33,6 @@ export default function WelcomeScreen() {
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.contentContainer}>
-          {/* Логотип секция */}
           <View style={styles.logoSection}>
             <Image
               source={require("@/src/assets/images/kiflow-logo.jpeg")}
@@ -47,8 +46,6 @@ export default function WelcomeScreen() {
               Your gateway to online education
             </RNText>
           </View>
-
-          {/* Кнопки секция */}
           <View style={styles.buttonSection}>
             <TouchableOpacity style={styles.navButton} onPress={handleSignIn}>
               <RNText style={styles.navText}>Sign In</RNText>

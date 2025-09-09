@@ -78,8 +78,6 @@ export interface Course {
   title: string;
   description?: string;
   slides: Slide[];
-
-  // Course metadata
   instructor: string;
   level: string;
   duration: string;

@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import CourseCard from './components/CourseCard';
 
-// 🔹 Мок-дані
 const mockCourses: Course[] = [
   {
     id: '1',
@@ -88,7 +87,6 @@ const CoursesScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Courses list */}
       <ScrollView contentContainerStyle={styles.listContainer}>
         {courses.length === 0 ? (
           <Text style={styles.loadingText}>Завантаження курсів...</Text>

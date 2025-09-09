@@ -43,8 +43,6 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <Text style={styles.statText}>{course.students || 0} учнів</Text>
           </HStack>
         </HStack>
-
-        {/* Кнопка */}
         <HStack style={styles.button_block}>
         <Pressable
           style={({ pressed }) => [
@@ -94,7 +92,7 @@ const styles = StyleSheet.create({
     width: '50%',
   },
   buttonPressed: {
-    backgroundColor: '#45A049', // темніший при натисканні
+    backgroundColor: '#45A049',
   },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
   button_block: {width:'100%', display:"flex", alignItems:'center', justifyContent:'center'}
