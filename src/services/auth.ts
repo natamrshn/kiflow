@@ -1,9 +1,15 @@
-// Using global setTimeout instead of Node.js timers module
 import { supabase } from '../config/supabaseClient';
-// import { supabase } from '../config/supabase';
 
-export const signUp = async (email: string, password: string) => {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export const signUp = async (email: string, password: string, extra?: { name?: string }) => {
+  const { data, error } = await supabase.auth.signUp({ 
+    email,
+    password,
+    options: {
+      data: {
+        full_name: extra?.name || null
+      },
+    },
+   });
   return { data, error };
 };
 

@@ -1,4 +1,3 @@
-// src/screens/Auth/RegisterScreen.tsx
 import { signUp } from '@/src/services/auth';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -22,11 +21,12 @@ interface AuthError {
 }
 
 export default function RegisterScreen() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [errors, setErrors] = useState<{ email?: string; password?: string; confirmPassword?: string }>({});
-  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean; confirmPassword?: boolean }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
+  const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean; confirmPassword?: boolean }>({});
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -34,6 +34,10 @@ export default function RegisterScreen() {
 
   const validate = () => {
     const newErrors: typeof errors = {};
+
+    if (!name.trim()) {
+      newErrors.name = 'Name is required';
+    }
 
     if (!email) {
       newErrors.email = 'Email is required';
@@ -59,17 +63,16 @@ export default function RegisterScreen() {
 
   const handleBlur = (field: keyof typeof touched) => {
     setTouched({ ...touched, [field]: true });
-    validate(); // перевірка запускається тільки коли інпут втрачено
+    validate(); 
   };
 
   const handleRegister = async () => {
-    // коли юзер клікає Sign Up — позначаємо всі поля як touched
-    setTouched({ email: true, password: true, confirmPassword: true });
+    setTouched({ name: true, email: true, password: true, confirmPassword: true });
     if (!validate()) return;
 
     setLoading(true);
     try {
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, { name }); // 👈 передаємо name
       if (error) throw error;
 
       Alert.alert('Success', 'Account created successfully');
@@ -99,6 +102,17 @@ export default function RegisterScreen() {
           <Text style={styles.title}>Sign up</Text>
 
           <View style={styles.form}>
+            {/* Name */}
+            <TextInput
+              placeholder="Full name"
+              style={[styles.input, touched.name && errors.name && styles.inputError]}
+              autoCapitalize="words"
+              value={name}
+              onChangeText={setName}
+              onBlur={() => handleBlur('name')}
+            />
+            {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
             {/* Email */}
             <TextInput
               placeholder="Email"
@@ -142,6 +156,7 @@ export default function RegisterScreen() {
             <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
               <Text style={styles.buttonText}>{loading ? 'Signing up...' : 'Sign Up'}</Text>
             </TouchableOpacity>
+
             {/* Registration link */}
             <View style={styles.registerContainer}>
               <Text style={styles.registerText}>Do you already have an account?</Text>
