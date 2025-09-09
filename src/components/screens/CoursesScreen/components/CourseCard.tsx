@@ -1,7 +1,6 @@
 import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
 import type { Course } from '@/src/constants/types/course';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -22,27 +21,9 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
       />
       <VStack style={styles.content}>
         <Text style={styles.title}>{course.title}</Text>
-        <Text style={styles.instructor}>Інструктор: {course.instructor}</Text>
         <Text style={styles.description} numberOfLines={2}>
           {course.description || 'Опис відсутній'}
         </Text>
-
-        <HStack style={styles.statsRow}>
-          <HStack style={styles.stat}>
-            <Ionicons name="time-outline" size={16} color="#6B7280" />
-            <Text style={styles.statText}>{course.duration || 'Тривалість невідома'}</Text>
-          </HStack>
-
-          <HStack style={styles.stat}>
-            <Ionicons name="star" size={16} color="#F59E0B" />
-            <Text style={styles.statText}>{course.rating?.toFixed(1) || 'Н/Д'}</Text>
-          </HStack>
-
-          <HStack style={styles.stat}>
-            <Ionicons name="people-outline" size={16} color="#6B7280" />
-            <Text style={styles.statText}>{course.students || 0} учнів</Text>
-          </HStack>
-        </HStack>
         <HStack style={styles.button_block}>
         <Pressable
           style={({ pressed }) => [

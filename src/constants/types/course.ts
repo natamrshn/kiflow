@@ -77,13 +77,11 @@ export interface Course {
   id: string;
   title: string;
   description?: string;
-  slides: Slide[];
   instructor: string;
-  level: string;
-  duration: string;
-  rating: number;
-  students: number;
   image: string;
+  is_public: boolean;
+  code: string;
+  contact_email: string;
 }
 
 export interface CourseSelectionProps {

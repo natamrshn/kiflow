@@ -1,87 +1,38 @@
 import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { Text } from '@/src/components/ui/text';
 import type { Course } from '@/src/constants/types/course';
+import { getCourses } from '@/src/services/courses';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import CourseCard from './components/CourseCard';
 
-const mockCourses: Course[] = [
-  {
-    id: '1',
-    title: 'React Native для початківців',
-    instructor: 'Іван Петренко',
-    description: 'Вивчіть основи React Native та створіть свій перший мобільний додаток.',
-    image: 'https://picsum.photos/800/600?random=1',
-    duration: '12 годин',
-    rating: 4.5,
-    students: 123,
-    level: 'Початковий',
-    slides: [
-      {
-        id: 's1',
-        type: 'text',
-        title: 'Вступ',
-        content: 'Ласкаво просимо на курс React Native!',
-      },
-    ],
-  },
-  {
-    id: '2',
-    title: 'Основи TypeScript',
-    instructor: 'Марія Коваль',
-    description: 'Зрозумійте базові концепції TypeScript для кращої типізації.',
-    image: 'https://picsum.photos/800/600?random=2',
-    duration: '8 годин',
-    rating: 4.8,
-    students: 87,
-    level: 'Середній',
-    slides: [
-      {
-        id: 's2',
-        type: 'quiz',
-        title: 'Що таке TypeScript?',
-        quiz: {
-          question: 'TypeScript — це...',
-          options: ['Бібліотека', 'Фреймворк', 'Мова програмування'],
-          correctAnswer: 2,
-        },
-      },
-    ],
-  },
-  {
-    id: '3',
-    title: 'UI/UX Дизайн',
-    instructor: 'Олег Сидоренко',
-    description: 'Курс про створення привабливих і зручних інтерфейсів.',
-    image: 'https://picsum.photos/800/600?random=3',
-    duration: '15 годин',
-    rating: 4.2,
-    students: 200,
-    level: 'Початковий',
-    slides: [
-      {
-        id: 's3',
-        type: 'content',
-        title: 'Основи UI',
-        mainPoint: 'Зрозумійте кольори, шрифти та композицію.',
-        tips: ['Використовуйте контраст', 'Дотримуйтесь ієрархії'],
-        example: 'Приклад: редизайн мобільного застосунку',
-      },
-    ],
-  },
-];
 
 const CoursesScreen = () => {
   const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
-    setTimeout(() => {
-      setCourses(mockCourses);
-    }, 500);
+    setLoading(true);
+  
+    getCourses()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('Помилка при завантаженні курсів:', error);
+        } else {
+          setCourses(data || []);
+        }
+      })
+      .catch(err => {
+        console.error('Непередбачена помилка при завантаженні курсів:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
-
+  
   const defaultAvatarUrl =
     'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg';
 
