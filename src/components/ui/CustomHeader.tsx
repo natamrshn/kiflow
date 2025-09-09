@@ -1,28 +1,87 @@
 // src/components/CustomHeader.tsx
-import { useRouter } from "expo-router";
+import { useIsGuestUser } from "@/src/hooks/auth/useIsGuestUser";
+import { signOut } from "@/src/services/auth";
+import { Href, useRouter } from "expo-router";
+import { LogIn, LogOut } from "lucide-react-native";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { AppRoute } from "../screens/HomePageScreen/NavigationButton";
+import { Button } from "./button";
+import { HStack } from "./hstack";
+import { Icon } from "./icon";
 
 export default function CustomHeader() {
   const router = useRouter();
 
+  const isGuestValue = useIsGuestUser();
+  const isGuest = isGuestValue === null ? true : isGuestValue;
+
   const defaultAvatarUrl =
     "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg";
 
+  const handleLogout = async () => {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        console.error("Logout error:", error);
+        return;
+      }
+      console.log("Successfully logged out");
+    } catch (error) {
+      console.error("Unexpected logout error:", error);
+    }
+  };
+
+  const navigateTo = (route: AppRoute) => {
+    router.push(route as Href);
+  };
+
   return (
     <View style={styles.headerContainer}>
-      {/* Guest label */}
-      <View style={styles.guestLabel}>
-        <Text style={styles.guestText}>Guest</Text>
-      </View>
+      {/* Left side: Guest label */}
+      {isGuest ? (
+        <HStack className="items-center justify-center rounded-md bg-gray-100 px-3 py-1">
+          
+          <Text style={styles.guestText}>Guest</Text>
+        </HStack>
+      ):
+      <HStack className="items-center justify-center rounded-md bg-gray-100 px-3 py-1">
+          
+          <Text style={styles.guestText}>User</Text>
+        </HStack>
+      }
 
-  
-      {/* User avatar + кнопка входу/виходу */}
+      {/* Right side: actions */}
       <View style={styles.actions}>
-        <TouchableOpacity onPress={() => router.push("/auth/login")}>
-          <Text style={styles.loginText}>Login</Text>
-        </TouchableOpacity>
-        <Image source={{ uri: defaultAvatarUrl }} style={styles.avatar} />
+        {isGuest ? (
+          <Button
+            variant="solid"
+            size="sm"
+            action="primary"
+            onPress={() => navigateTo("/auth/login")}
+            className="rounded-md"
+          >
+            <Icon as={LogIn} className="mr-1 text-white" />
+            {/* <ButtonText className="text-white">Login</ButtonText> */}
+          </Button>
+        ) : (
+          <>
+            <Image
+              source={{ uri: defaultAvatarUrl }}
+              style={styles.avatar}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              action="secondary"
+              onPress={handleLogout}
+              className="rounded-md"
+            >
+              <Icon as={LogOut} className="mr-1" />
+              {/* <ButtonText>Logout</ButtonText> */}
+            </Button>
+          </>
+        )}
       </View>
     </View>
   );
@@ -39,28 +98,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#eee",
   },
-  guestLabel: {
-    backgroundColor: "#f3f3f3",
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
   guestText: {
     color: "#666",
     fontWeight: "500",
-  },
-  logo: {
-    width: 120,
-    height: 40,
   },
   actions: {
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-  },
-  loginText: {
-    color: "#007bff",
-    fontWeight: "600",
   },
   avatar: {
     width: 36,

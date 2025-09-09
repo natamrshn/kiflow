@@ -1,19 +1,19 @@
-import { signIn } from '@/src/services/auth';
+// src/screens/Auth/RegisterScreen.tsx
+import { signUp } from '@/src/services/auth';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-
 
 interface AuthError {
   message?: string;
@@ -21,36 +21,40 @@ interface AuthError {
   [key: string]: unknown;
 }
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const windowWidth = Dimensions.get('window').width;
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
 
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
     setLoading(true);
     try {
-      const { error } = await signIn(email, password);
+      const { error } = await signUp(email, password);
       if (error) throw error;
 
-      // Navigate to home regardless of navigation state
-      router.replace('/');
+      Alert.alert('Success', 'Account created successfully');
+      router.replace('/'); // після реєстрації перекидаємо на головну
     } catch (err: unknown) {
       const error = err as AuthError;
-      Alert.alert('Login Failed', error.message || 'Login failed');
+      Alert.alert('Registration Failed', error.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,7 +67,7 @@ export default function LoginScreen() {
             resizeMode="contain"
           />
 
-          <Text style={styles.title}>Sign in</Text>
+          <Text style={styles.title}>Sign up</Text>
 
           <View style={styles.form}>
             <TextInput
@@ -81,10 +85,16 @@ export default function LoginScreen() {
               autoCapitalize="none"
               onChangeText={setPassword}
             />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Sign In</Text>
+            <TextInput
+              placeholder="Confirm Password"
+              style={styles.input}
+              secureTextEntry
+              autoCapitalize="none"
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Sign Up</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -115,16 +125,4 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  orContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 12 },
-  line: { flex: 1, height: 1, backgroundColor: '#ccc' },
-  orText: { marginHorizontal: 8, color: '#555' },
-  googleButton: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  googleText: { fontWeight: 'bold', fontSize: 16 },
 });

@@ -4,6 +4,7 @@ import CustomHeader from "../../ui/CustomHeader";
 
 export default function HomeScreen() {
   const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* Хедер */}

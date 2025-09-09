@@ -4,9 +4,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 
-import { supabase } from '@/src/config/supabaseClient';
 import { useColorScheme } from '../hooks/useColorScheme.web';
-// import { useColorScheme } from '@/hooks/useColorScheme';
 
 
 export default function RootLayout() {
@@ -19,8 +17,6 @@ export default function RootLayout() {
     // Async font loading only occurs in development.
     return null;
   }
-
-  console.log("supabase", supabase)
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
