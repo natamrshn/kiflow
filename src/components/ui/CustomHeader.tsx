@@ -58,7 +58,7 @@ export default function CustomHeader() {
             variant="solid"
             size="sm"
             action="primary"
-            onPress={() => navigateTo("/auth/login")}
+            onPress={() => navigateTo("/")}
             className="rounded-md"
           >
             <Icon as={LogIn} className="mr-1 text-white" />

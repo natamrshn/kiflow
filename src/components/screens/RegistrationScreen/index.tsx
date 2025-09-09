@@ -47,7 +47,7 @@ export default function RegisterScreen() {
       if (error) throw error;
 
       Alert.alert('Success', 'Account created successfully');
-      router.replace('/'); // після реєстрації перекидаємо на головну
+      router.replace('/course-code'); // після реєстрації перекидаємо на головну
     } catch (err: unknown) {
       const error = err as AuthError;
       Alert.alert('Registration Failed', error.message || 'Something went wrong');

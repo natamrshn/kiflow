@@ -11,7 +11,7 @@ export default function WelcomeScreen() {
   };
 
   const handleSignUp = () => {
-    router.push('/auth/signup');
+    router.push('/auth/registration');
   };
 
   return (

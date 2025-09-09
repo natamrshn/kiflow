@@ -42,7 +42,7 @@ export default function LoginScreen() {
       if (error) throw error;
 
       // Navigate to home regardless of navigation state
-      router.replace('/');
+      router.replace('/home');
     } catch (err: unknown) {
       const error = err as AuthError;
       Alert.alert('Login Failed', error.message || 'Login failed');
