@@ -1,9 +1,6 @@
-import { Button } from '@/src/components/ui/button';
-import { Image } from '@/src/components/ui/image';
 import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { Text } from '@/src/components/ui/text';
 import type { Course } from '@/src/constants/types/course';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
@@ -91,15 +88,6 @@ const CoursesScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Button variant="link" action="default" onPress={() => router.push('/')}>
-          <Ionicons name="arrow-back" size={24} />
-        </Button>
-        <Text style={styles.headerTitle}>КУРСИ</Text>
-        <Image source={{ uri: defaultAvatarUrl }} style={styles.avatar} />
-      </View>
-
       {/* Courses list */}
       <ScrollView contentContainerStyle={styles.listContainer}>
         {courses.length === 0 ? (

@@ -1,10 +1,19 @@
+import { useIsGuestUser } from '@/src/hooks/auth/useIsGuestUser';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, Text as RNText, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function WelcomeScreen() {
   const router = useRouter();
+  const isGuestValue = useIsGuestUser();
+  const isGuest = isGuestValue === null ? true : isGuestValue;
+
+  useEffect(()=>{
+    if(!isGuest){
+      router.push('/home');
+    }
+  },[isGuest])
 
   const handleSignIn = () => {
     router.push('/auth/login');
@@ -13,6 +22,10 @@ export default function WelcomeScreen() {
   const handleSignUp = () => {
     router.push('/auth/registration');
   };
+
+
+
+
 
   return (
     <View style={styles.container}>
