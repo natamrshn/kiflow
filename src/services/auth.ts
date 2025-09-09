@@ -1,4 +1,4 @@
-import { setTimeout } from 'timers';
+// Using global setTimeout instead of Node.js timers module
 import { supabase } from '../config/supabaseClient';
 // import { supabase } from '../config/supabase';
 
