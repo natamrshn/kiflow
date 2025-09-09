@@ -24,9 +24,6 @@ export default function WelcomeScreen() {
   };
 
 
-
-
-
   return (
     <View style={styles.container}>
       <LinearGradient
