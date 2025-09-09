@@ -1,3 +1,4 @@
+// src/screens/Auth/LoginScreen.tsx
 import { signIn } from '@/src/services/auth';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -14,7 +15,6 @@ import {
   View
 } from 'react-native';
 
-
 interface AuthError {
   message?: string;
   status?: number;
@@ -24,24 +24,46 @@ interface AuthError {
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [touched, setTouched] = useState<{ email?: boolean; password?: boolean }>({});
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const windowWidth = Dimensions.get('window').width;
 
-  const handleLogin = async () => {
+  const validate = () => {
+    const newErrors: typeof errors = {};
 
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter both email and password');
-      return;
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Invalid email format';
     }
+
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleBlur = (field: keyof typeof touched) => {
+    setTouched({ ...touched, [field]: true });
+    validate();
+  };
+
+  const handleLogin = async () => {
+    setTouched({ email: true, password: true });
+    if (!validate()) return;
 
     setLoading(true);
     try {
       const { error } = await signIn(email, password);
       if (error) throw error;
 
-      // Navigate to home regardless of navigation state
       router.replace('/home');
     } catch (err: unknown) {
       const error = err as AuthError;
@@ -51,6 +73,9 @@ export default function LoginScreen() {
     }
   };
 
+  const handleGoToRegister = () => {
+    router.push('/auth/registration');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -66,25 +91,43 @@ export default function LoginScreen() {
           <Text style={styles.title}>Sign in</Text>
 
           <View style={styles.form}>
+            {/* Email */}
             <TextInput
               placeholder="Email"
-              style={styles.input}
+              style={[styles.input, touched.email && errors.email && styles.inputError]}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              value={email}
               onChangeText={setEmail}
+              onBlur={() => handleBlur('email')}
             />
+            {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+
+            {/* Password */}
             <TextInput
               placeholder="Password"
-              style={styles.input}
+              style={[styles.input, touched.password && errors.password && styles.inputError]}
               secureTextEntry
               autoCapitalize="none"
+              value={password}
               onChangeText={setPassword}
+              onBlur={() => handleBlur('password')}
             />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Sign In</Text>
+            {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+
+            {/* Button */}
+            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+              <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
             </TouchableOpacity>
 
+            {/* Registration link */}
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>Don’t have an account?</Text>
+              <TouchableOpacity onPress={handleGoToRegister}>
+                <Text style={styles.registerLink}> Sign up</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
@@ -103,8 +146,17 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 6,
     paddingHorizontal: 12,
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 13,
+    marginBottom: 6,
+    marginLeft: 4,
   },
   button: {
     height: 50,
@@ -112,19 +164,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginTop: 12,
   },
   buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  orContainer: { flexDirection: 'row', alignItems: 'center', marginVertical: 12 },
-  line: { flex: 1, height: 1, backgroundColor: '#ccc' },
-  orText: { marginHorizontal: 8, color: '#555' },
-  googleButton: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
+  registerContainer: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    marginTop: 16,
   },
-  googleText: { fontWeight: 'bold', fontSize: 16 },
+  registerText: {
+    color: '#555',
+    fontSize: 14,
+  },
+  registerLink: {
+    color: '#4CAF50',
+    fontWeight: '600',
+    fontSize: 14,
+  },
 });
