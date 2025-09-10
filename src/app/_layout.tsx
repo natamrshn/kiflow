@@ -40,9 +40,15 @@ export default function RootLayout() {
           }} 
         />
         <Stack.Screen 
-          name="courses" 
+          name="courses/index" 
           options={{ 
-            headerShown: false 
+            headerShown: true 
+          }} 
+        />
+        <Stack.Screen 
+          name="courses/[id]" 
+          options={{ 
+            headerShown: true 
           }} 
         />
         <Stack.Screen 

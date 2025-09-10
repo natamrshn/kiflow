@@ -30,7 +30,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.navSection}>
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/courses")} >
+          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/courses/")} >
             <Text style={styles.navText}>COURSES</Text>
           </TouchableOpacity>
 
