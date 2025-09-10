@@ -2,47 +2,97 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { joinCompanyByCode } from '../../../services/company';
 
 export default function CourseCodeScreen() {
   const [courseCode, setCourseCode] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [errorAnimation] = useState(new Animated.Value(0));
   const router = useRouter();
+
+  const showError = (message: string) => {
+    setError(message);
+    Animated.sequence([
+      Animated.timing(errorAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const hideError = () => {
+    Animated.timing(errorAnimation, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setError('');
+    });
+  };
 
   const handleConfirm = async () => {
     if (!courseCode.trim()) {
-      Alert.alert('Error', 'Please enter a course code');
+      showError('Будь ласка, введіть код курсу');
       return;
     }
 
+    // Скрываем предыдущую ошибку
+    hideError();
     setLoading(true);
+    
     try {
-      // TODO: Implement course code validation logic here
-      // For now, just simulate a successful validation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await joinCompanyByCode(courseCode.trim());
       
-      Alert.alert('Success', 'Course code accepted!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            // Navigate to homepage
-            router.push('/home');
+      if (result.success) {
+        const message = result.alreadyMember 
+          ? `Ви вже є членом компанії "${result.company?.name}". Вам доступні курси цієї компанії.`
+          : `Ви успішно приєдналися до компанії "${result.company?.name}". Тепер вам доступні курси цієї компанії.`;
+          
+        Alert.alert('Успіх!', message, [
+          {
+            text: 'OK',
+              onPress: () => {
+                // Переходимо на головну сторінку
+                console.log('Navigating to /home');
+                router.replace('/home');
+              }
           }
-        }
-      ]);
-    } catch {
-      Alert.alert('Error', 'Invalid course code. Please try again.');
+        ]);
+        
+        // Автоматичне перенаправлення через 3 секунди
+        setTimeout(() => {
+          console.log('Auto-navigating to /home');
+          router.replace('/home');
+        }, 1000);
+      } else {
+        showError('Невірний код курсу. Перевірте правильність введення та спробуйте ще раз.');
+      }
+    } catch (error) {
+      console.error('Error joining company:', error);
+      showError('Сталася помилка при приєднанні до компанії. Перевірте підключення до інтернету та спробуйте ще раз.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleTextChange = (text: string) => {
+    setCourseCode(text);
+    // Очищаем ошибку при изменении текста
+    if (error) {
+      hideError();
     }
   };
 
@@ -61,24 +111,52 @@ export default function CourseCodeScreen() {
           >
             <View style={styles.contentContainer}>
               <View style={styles.titleSection}>
-                <Text style={styles.title}>Enter Code</Text>
+                <Text style={styles.title}>Введіть код</Text>
                 <Text style={styles.subtitle}>
-                  Please enter the course code to join
+                  Введіть код компанії, щоб отримати доступ до її курсів
                 </Text>
               </View>
 
               <View style={styles.formSection}>
                 <TextInput
-                  style={styles.input}
-                  placeholder="Course code"
+                  style={[
+                    styles.input,
+                    error && styles.inputError
+                  ]}
+                  placeholder="Код компанії"
                   placeholderTextColor="#64748b"
                   value={courseCode}
-                  onChangeText={setCourseCode}
+                  onChangeText={handleTextChange}
                   autoCapitalize="characters"
                   autoCorrect={false}
                   returnKeyType="done"
                   onSubmitEditing={handleConfirm}
                 />
+
+                {/* Error Message */}
+                {error && (
+                  <Animated.View
+                    style={[
+                      styles.errorContainer,
+                      {
+                        opacity: errorAnimation,
+                        transform: [
+                          {
+                            translateY: errorAnimation.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [-10, 0],
+                            }),
+                          },
+                        ],
+                      },
+                    ]}
+                  >
+                    <View style={styles.errorContent}>
+                      <Text style={styles.errorIcon}>⚠️</Text>
+                      <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                  </Animated.View>
+                )}
 
                 <TouchableOpacity
                   style={[
@@ -89,7 +167,7 @@ export default function CourseCodeScreen() {
                   disabled={loading || !courseCode.trim()}
                 >
                   <Text style={styles.buttonText}>
-                    {loading ? 'Confirming...' : 'Confirm'}
+                    {loading ? 'Підтвердження...' : 'Підтвердити'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -161,6 +239,11 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 1,
   },
+  inputError: {
+    borderColor: '#ef4444',
+    borderWidth: 2,
+    backgroundColor: '#fef2f2',
+  },
   button: {
     height: 56,
     backgroundColor: '#3b82f6',
@@ -175,5 +258,29 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600',
     fontSize: 16,
+  },
+  errorContainer: {
+    marginTop: 8,
+  },
+  errorContent: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#fef2f2',
+    borderColor: '#fecaca',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    gap: 8,
+  },
+  errorIcon: {
+    fontSize: 16,
+    marginTop: 1,
+  },
+  errorText: {
+    flex: 1,
+    color: '#dc2626',
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 20,
   },
 });
