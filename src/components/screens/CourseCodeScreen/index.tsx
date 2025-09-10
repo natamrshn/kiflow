@@ -2,16 +2,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
+import { joinCompanyByCode } from '../../../services/company';
 
 export default function CourseCodeScreen() {
   const [courseCode, setCourseCode] = useState('');
@@ -20,27 +21,41 @@ export default function CourseCodeScreen() {
 
   const handleConfirm = async () => {
     if (!courseCode.trim()) {
-      Alert.alert('Error', 'Please enter a course code');
+      Alert.alert('Помилка', 'Будь ласка, введіть код курсу');
       return;
     }
 
     setLoading(true);
     try {
-      // TODO: Implement course code validation logic here
-      // For now, just simulate a successful validation
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await joinCompanyByCode(courseCode.trim());
       
-      Alert.alert('Success', 'Course code accepted!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            // Navigate to homepage
-            router.push('/home');
+      if (result.success) {
+        const message = result.alreadyMember 
+          ? `Ви вже є членом компанії "${result.company?.name}". Вам доступні курси цієї компанії.`
+          : `Ви успішно приєдналися до компанії "${result.company?.name}". Тепер вам доступні курси цієї компанії.`;
+          
+        Alert.alert('Успіх!', message, [
+          {
+            text: 'OK',
+              onPress: () => {
+                // Переходимо на головну сторінку
+                console.log('Navigating to /home');
+                router.replace('/home');
+              }
           }
-        }
-      ]);
-    } catch {
-      Alert.alert('Error', 'Invalid course code. Please try again.');
+        ]);
+        
+        // Автоматичне перенаправлення через 3 секунди
+        setTimeout(() => {
+          console.log('Auto-navigating to /home');
+          router.replace('/home');
+        }, 3000);
+      } else {
+        Alert.alert('Помилка', 'Невірний код курсу. Спробуйте ще раз.');
+      }
+    } catch (error) {
+      console.error('Error joining company:', error);
+      Alert.alert('Помилка', 'Сталася помилка при приєднанні до компанії. Спробуйте ще раз.');
     } finally {
       setLoading(false);
     }
@@ -61,16 +76,16 @@ export default function CourseCodeScreen() {
           >
             <View style={styles.contentContainer}>
               <View style={styles.titleSection}>
-                <Text style={styles.title}>Enter Code</Text>
+                <Text style={styles.title}>Введіть код</Text>
                 <Text style={styles.subtitle}>
-                  Please enter the course code to join
+                  Введіть код компанії, щоб отримати доступ до її курсів
                 </Text>
               </View>
 
               <View style={styles.formSection}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Course code"
+                  placeholder="Код компанії"
                   placeholderTextColor="#64748b"
                   value={courseCode}
                   onChangeText={setCourseCode}
@@ -89,7 +104,7 @@ export default function CourseCodeScreen() {
                   disabled={loading || !courseCode.trim()}
                 >
                   <Text style={styles.buttonText}>
-                    {loading ? 'Confirming...' : 'Confirm'}
+                    {loading ? 'Підтвердження...' : 'Підтвердити'}
                   </Text>
                 </TouchableOpacity>
               </View>

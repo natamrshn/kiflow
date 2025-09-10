@@ -72,7 +72,7 @@ export default function RegisterScreen() {
 
     setLoading(true);
     try {
-      const { error } = await signUp(email, password, { name }); // 👈 передаємо name
+      const { error } = await signUp(email, password, { name }); // 👈 передаємо ім'я
       if (error) throw error;
 
       Alert.alert('Success', 'Account created successfully');

@@ -9,11 +9,11 @@ export default function WelcomeScreen() {
   const isGuestValue = useIsGuestUser();
   const isGuest = isGuestValue === null ? true : isGuestValue;
 
-  useEffect(()=>{
-    if(!isGuest){
-      router.push('/home');
-    }
-  },[isGuest])
+  // useEffect(()=>{
+  //   if(!isGuest){
+  //     router.push('/home');
+  //   }
+  // },[isGuest])
 
   const handleSignIn = () => {
     router.push('/auth/login');
