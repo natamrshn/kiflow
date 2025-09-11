@@ -74,6 +74,7 @@ export default function CourseScreen() {
         slides={slides}
         initialIndex={params.slideIndex ? parseInt(params.slideIndex, 10) : 0}
         onIndexChange={handleSlideChange}
+        totalSlides={slides.length}
       />
     </View>
   );

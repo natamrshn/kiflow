@@ -2,6 +2,7 @@ import { Slide } from '@/src/constants/types/slides';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
+import AICourseChatPlaceholder from './slides/AiCourseChat';
 import ContentWithExample from './slides/ContentWithExample';
 import MediaPlaceholder from './slides/MediaPlaceholder';
 import QuizSlide from './slides/QuizeSlide';
@@ -12,9 +13,10 @@ interface CourseSwiperProps {
   slides: Slide[];
   initialIndex?: number;
   onIndexChange?: (index: number) => void;
+  totalSlides:number
 }
 
-const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex = 0, onIndexChange }) => {
+const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex = 0, onIndexChange ,totalSlides}) => {
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<Animated.ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(Math.max(0, initialIndex));
@@ -71,21 +73,24 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
           </View>
         );
 
-    //   case 'ai':
-    //     return (
-    //       <View key={slide.id} style={{ width, height }}>
-    //         <AICourseChatPlaceholder
-    //           title={slide.slide_title}
-    //           currentIndex={index}
-    //           totalSlides={slides.length}
-    //           isActive={isActive}
-    //         />
-    //       </View>
-    //     );
+        case 'ai':
+            return (
+              <View key={key} style={{ width, height }}>
+                <AICourseChatPlaceholder
+                title={slide.slide_title}
+                //   slideData={slideData}
+                  isActive={isActive}
+                //   onComplete={onComplete}
+                  currentIndex={currentIndex}
+                  totalSlides={totalSlides}
+                />
+              </View>
+            );
+      
 
       case 'content':
         return (
-          <View key={slide.id} style={{ width, height }}>
+          <View key={key} style={{ width, height }}>
             <ContentWithExample
               title={slide.slide_title}
               mainPoint={slide.slide_data.mainPoint}
@@ -95,12 +100,12 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
           </View>
         );
 
-    //   default:
-    //     return (
-    //       <View key={slide.id} style={{ width, height, justifyContent: 'center', alignItems: 'center' }}>
-    //         <MediaPlaceholder message={`Слайд типу "${slide.slide_type}" ще не підтримується`}  />
-    //       </View>
-    //     );
+      default:
+        return (
+          <View key={slide.id} style={{ width, height, justifyContent: 'center', alignItems: 'center' }}>
+            <MediaPlaceholder message={`Слайд типу "${slide.slide_type}" ще не підтримується`}  />
+          </View>
+        );
     }
   };
 
