@@ -1,4 +1,4 @@
-import { Button, ButtonIcon, ButtonText } from '@/src/components/ui/button';
+import Button from '@/src/components/ui/button';
 import type { LucideIcon } from 'lucide-react-native';
 import React from 'react';
 
@@ -18,12 +18,12 @@ export type AppRoute =
 
 interface NavigationButtonProps {
   route: AppRoute;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   label: string;
   onNavigate: (route: AppRoute) => void;
-  variant?: 'solid' | 'outline';
-  action?: 'primary' | 'secondary' | 'positive' | 'negative' | 'default';
-  className?: string;
+  variant?: 'primary' | 'secondary' | 'success' | 'error';
+  size?: 'sm' | 'md' | 'lg';
+  style?: any;
 }
 
 export const NavigationButton: React.FC<NavigationButtonProps> = ({
@@ -31,19 +31,17 @@ export const NavigationButton: React.FC<NavigationButtonProps> = ({
   icon,
   label,
   onNavigate,
-  variant = 'outline',
-  action = 'primary',
-  className = 'w-full',
+  variant = 'secondary',
+  size = 'md',
+  style,
 }) => {
   return (
     <Button
+      title={label.toUpperCase()}
       variant={variant}
-      action={action}
-      className={className}
+      size={size}
       onPress={() => onNavigate(route)}
-    >
-      <ButtonIcon as={icon} />
-      <ButtonText className='uppercase'>{label}</ButtonText>
-    </Button>
+      style={style}
+    />
   );
 };

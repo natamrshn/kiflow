@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import Button from '../../ui/button';
 
 interface AuthError {
   message?: string;
@@ -117,9 +118,14 @@ export default function LoginScreen() {
             {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
             {/* Button */}
-            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-              <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
-            </TouchableOpacity>
+            <Button 
+              title={loading ? 'Signing in...' : 'Sign In'} 
+              variant="primary" 
+              size="lg"
+              onPress={handleLogin} 
+              disabled={loading}
+              style={styles.button}
+            />
 
             {/* Registration link */}
             <View style={styles.registerContainer}>
@@ -159,14 +165,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   button: {
-    height: 50,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 12,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerLink: {
-    color: '#4CAF50',
+    color: '#000000',
     fontWeight: '600',
     fontSize: 14,
   },

@@ -1,6 +1,7 @@
 import { Stack, useRouter } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Button from "../../ui/button";
 import CustomHeader from "../../ui/CustomHeader";
 import { SafeAreaView } from "../../ui/safe-area-view";
 
@@ -30,25 +31,45 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.navSection}>
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/courses/")} >
-            <Text style={styles.navText}>COURSES</Text>
-          </TouchableOpacity>
+          <Button 
+            title="COURSES" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => router.push("/courses/")}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/instractions")}>
-            <Text style={styles.navText}>AI INSTRUCTIONS</Text>
-          </TouchableOpacity>
+          <Button 
+            title="AI INSTRUCTIONS" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => router.push("/instractions")}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navText}>REAL ESTATE SIMULATOR</Text>
-          </TouchableOpacity>
+          <Button 
+            title="REAL ESTATE SIMULATOR" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => {}}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navText}>COMPANY DASHBOARD</Text>
-          </TouchableOpacity>
+          <Button 
+            title="COMPANY DASHBOARD" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => {}}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/design-system")}>
-            <Text style={styles.navText}>DESIGN SYSTEM</Text>
-          </TouchableOpacity>
+          <Button 
+            title="DESIGN SYSTEM" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => router.push("/design-system")}
+            style={styles.navButton}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -58,7 +79,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   contentContainer: {
     flex: 1,
@@ -85,15 +105,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   navButton: {
-    backgroundColor: "#eee",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     width: "80%",
-    alignItems: "center",
-  },
-  navText: {
-    fontSize: 16,
-    fontWeight: "600",
   },
 });

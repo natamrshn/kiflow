@@ -3,7 +3,8 @@ import { VStack } from '@/src/components/ui/vstack';
 import type { Course } from '@/src/constants/types/course';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
+import Button from '../../../ui/button';
 
 interface CourseCardProps {
   course: Course;
@@ -24,15 +25,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
           {course.description || 'Опис відсутній'}
         </Text>
         <HStack style={styles.button_block}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed
-          ]}
-          onPress={() => router.push(`/courses/${course.id}`)}
-          >
-          <Text style={styles.buttonText}>ПОЧАТИ КУРС</Text>
-        </Pressable>
+          <Button
+            title="ПОЧАТИ КУРС"
+            variant="primary"
+            size="md"
+            onPress={() => router.push(`/courses/${course.id}`)}
+            style={styles.button}
+          />
         </HStack>
       </VStack>
     </View>
@@ -44,7 +43,7 @@ export default CourseCard;
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: '#ffffff',
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -62,18 +61,8 @@ const styles = StyleSheet.create({
   stat: {display:'flex', flexDirection: 'row', alignItems: 'center', gap: 4 },
   statText: { fontSize: 12, color: '#555' },
   button: {
-    display:'flex',
     marginTop: 16,
-    backgroundColor: '#4CAF50',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    alignSelf: 'center',
     width: '50%',
   },
-  buttonPressed: {
-    backgroundColor: '#45A049',
-  },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 14 },
   button_block: {width:'100%', display:"flex", alignItems:'center', justifyContent:'center'}
 });

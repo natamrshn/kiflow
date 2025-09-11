@@ -1,10 +1,10 @@
 import React, { useRef } from "react";
 import {
-    Animated,
-    Dimensions,
-    Pressable,
-    StyleSheet,
-    Text
+  Animated,
+  Dimensions,
+  Pressable,
+  StyleSheet,
+  Text
 } from "react-native";
 
 // Імпорт UI-компонентів

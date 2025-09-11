@@ -1,8 +1,7 @@
 import React from 'react';
 import type { TouchableOpacityProps } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
 
-import { Button, ButtonIcon, ButtonText } from '@/src/components/ui/button';
+import Button from '@/src/components/ui/button';
 
 /**
  * GoogleSignInButton component props
@@ -13,7 +12,7 @@ import { Button, ButtonIcon, ButtonText } from '@/src/components/ui/button';
  */
 interface GoogleSignInButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   text?: string;
-  className?: string;
+  style?: any;
 }
 
 /**
@@ -27,21 +26,16 @@ interface GoogleSignInButtonProps extends Omit<TouchableOpacityProps, 'style'> {
  */
 export default function GoogleSignInButton({
   text = 'Sign in with Google',
-  className,
+  style,
   ...props
 }: GoogleSignInButtonProps): React.ReactElement {
   return (
     <Button
-      variant='outline'
-      className={`bg-background mb-4 h-12 w-full border border-outline-200 ${className || ''}`}
+      title={text}
+      variant='secondary'
+      size='md'
+      style={[{ marginBottom: 16, width: '100%' }, style]}
       {...props}
-    >
-      <ButtonIcon
-        className='text-primary-500'
-        size='sm'
-        as={props => <AntDesign name='google' {...props} />}
-      />
-      <ButtonText className='ml-2 font-medium text-primary-300'>{text}</ButtonText>
-    </Button>
+    />
   );
 }

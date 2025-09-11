@@ -142,19 +142,19 @@ const styles = StyleSheet.create({
 
   // Sizes
   sm: {
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    minHeight: 36,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    minHeight: 16,
   },
   md: {
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    minHeight: 48,
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    minHeight: 36,
   },
   lg: {
-    paddingVertical: 16,
+    paddingVertical: 14,
     paddingHorizontal: 32,
-    minHeight: 56,
+    minHeight: 48,
   },
 
   // Text sizes

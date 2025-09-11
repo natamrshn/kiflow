@@ -1,17 +1,16 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  Alert,
-  Animated,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    Animated,
+    KeyboardAvoidingView,
+    Platform,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { joinCompanyByCode } from '../../../services/company';
 
@@ -98,83 +97,76 @@ export default function CourseCodeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#f8fafc', '#e2e8f0']}
-        style={styles.backgroundGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          <KeyboardAvoidingView 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.keyboardView}
-          >
-            <View style={styles.contentContainer}>
-              <View style={styles.titleSection}>
-                <Text style={styles.title}>Введіть код</Text>
-                <Text style={styles.subtitle}>
-                  Введіть код компанії, щоб отримати доступ до її курсів
-                </Text>
-              </View>
-
-              <View style={styles.formSection}>
-                <TextInput
-                  style={[
-                    styles.input,
-                    error && styles.inputError
-                  ]}
-                  placeholder="Код компанії"
-                  placeholderTextColor="#64748b"
-                  value={courseCode}
-                  onChangeText={handleTextChange}
-                  autoCapitalize="characters"
-                  autoCorrect={false}
-                  returnKeyType="done"
-                  onSubmitEditing={handleConfirm}
-                />
-
-                {/* Error Message */}
-                {error && (
-                  <Animated.View
-                    style={[
-                      styles.errorContainer,
-                      {
-                        opacity: errorAnimation,
-                        transform: [
-                          {
-                            translateY: errorAnimation.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [-10, 0],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
-                  >
-                    <View style={styles.errorContent}>
-                      <Text style={styles.errorIcon}>⚠️</Text>
-                      <Text style={styles.errorText}>{error}</Text>
-                    </View>
-                  </Animated.View>
-                )}
-
-                <TouchableOpacity
-                  style={[
-                    styles.button,
-                    (loading || !courseCode.trim()) && styles.buttonDisabled
-                  ]}
-                  onPress={handleConfirm}
-                  disabled={loading || !courseCode.trim()}
-                >
-                  <Text style={styles.buttonText}>
-                    {loading ? 'Підтвердження...' : 'Підтвердити'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
+        >
+          <View style={styles.contentContainer}>
+            <View style={styles.titleSection}>
+              <Text style={styles.title}>Введіть код</Text>
+              <Text style={styles.subtitle}>
+                Введіть код компанії, щоб отримати доступ до її курсів
+              </Text>
             </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </LinearGradient>
+
+            <View style={styles.formSection}>
+              <TextInput
+                style={[
+                  styles.input,
+                  error && styles.inputError
+                ]}
+                placeholder="Код компанії"
+                placeholderTextColor="#64748b"
+                value={courseCode}
+                onChangeText={handleTextChange}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                returnKeyType="done"
+                onSubmitEditing={handleConfirm}
+              />
+
+              {/* Error Message */}
+              {error && (
+                <Animated.View
+                  style={[
+                    styles.errorContainer,
+                    {
+                      opacity: errorAnimation,
+                      transform: [
+                        {
+                          translateY: errorAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-10, 0],
+                          }),
+                        },
+                      ],
+                    },
+                  ]}
+                >
+                  <View style={styles.errorContent}>
+                    <Text style={styles.errorIcon}>⚠️</Text>
+                    <Text style={styles.errorText}>{error}</Text>
+                  </View>
+                </Animated.View>
+              )}
+
+              <TouchableOpacity
+                style={[
+                  styles.button,
+                  (loading || !courseCode.trim()) && styles.buttonDisabled
+                ]}
+                onPress={handleConfirm}
+                disabled={loading || !courseCode.trim()}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? 'Підтвердження...' : 'Підтвердити'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -183,9 +175,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  backgroundGradient: {
-    flex: 1,
   },
   safeArea: {
     flex: 1,

@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Button from '../../ui/button';
 
 interface AuthError {
   message?: string;
@@ -153,9 +154,14 @@ export default function RegisterScreen() {
             )}
 
             {/* Button */}
-            <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
-              <Text style={styles.buttonText}>{loading ? 'Signing up...' : 'Sign Up'}</Text>
-            </TouchableOpacity>
+            <Button 
+              title={loading ? 'Signing up...' : 'Sign Up'} 
+              variant="primary" 
+              size="lg"
+              onPress={handleRegister} 
+              disabled={loading}
+              style={styles.button}
+            />
 
             {/* Registration link */}
             <View style={styles.registerContainer}>
@@ -195,14 +201,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   button: {
-    height: 50,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
     marginTop: 12,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerLink: {
-    color: '#4CAF50',
+    color: '#000000',
     fontWeight: '600',
     fontSize: 14,
   },

@@ -2,14 +2,12 @@
 import { useIsGuestUser } from "@/src/hooks/auth/useIsGuestUser";
 import { signOut } from "@/src/services/auth";
 import { Href, useRouter } from "expo-router";
-import { LogIn, LogOut } from "lucide-react-native";
 import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppRoute } from "../screens/HomePageScreen/NavigationButton";
-import { Button } from "./button";
+import Button from "./button";
 import { HStack } from "./hstack";
-import { Icon } from "./icon";
 
 export default function CustomHeader() {
   const router = useRouter();
@@ -57,15 +55,12 @@ export default function CustomHeader() {
       <View style={styles.actions}>
         {isGuest ? (
           <Button
-            variant="solid"
+            title="Login"
+            variant="primary"
             size="sm"
-            action="primary"
             onPress={() => navigateTo("/")}
-            className="rounded-md"
-          >
-            <Icon as={LogIn} className="mr-1 text-white" />
-            {/* <ButtonText className="text-white">Login</ButtonText> */}
-          </Button>
+            style={styles.loginButton}
+          />
         ) : (
           <>
             <Image
@@ -73,15 +68,12 @@ export default function CustomHeader() {
               style={styles.avatar}
             />
             <Button
-              variant="outline"
+              title="Logout"
+              variant="secondary"
               size="sm"
-              action="secondary"
               onPress={handleLogout}
-              className="rounded-md"
-            >
-              <Icon as={LogOut} className="mr-1" />
-              {/* <ButtonText>Logout</ButtonText> */}
-            </Button>
+              style={styles.logoutButton}
+            />
           </>
         )}
       </View>
@@ -115,5 +107,11 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: "#000",
+  },
+  loginButton: {
+    minWidth: 80,
+  },
+  logoutButton: {
+    minWidth: 80,
   },
 });
