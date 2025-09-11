@@ -3,6 +3,7 @@ import { Slide } from '@/src/constants/types/slides';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
+import TextSlide from './slides/TextSlide';
 
 interface CourseSwiperProps {
   slides: Slide[];
@@ -38,13 +39,12 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
         alignItems: "center" as const 
       };
     switch (slide.slide_type) {
-      case 'text':
-        return (
-          <View key={slide.id} style={[commonStyle, { backgroundColor: '#F9FAFB', padding: 20 }]}>
-            <Text style={styles.slideTitle}>{slide.slide_title}</Text>
-            {/* <Text style={styles.slideContent}>{slide.content}</Text> */}
-          </View>
-        );
+        case 'text':
+            return (
+              <View key={slide.id} style={{ width, height }}>
+                <TextSlide title={slide.slide_title} data={slide.slide_data ?? ''} />
+              </View>
+            );
       case 'video':
         return (
           <View key={slide.id} style={[commonStyle, { backgroundColor: '#E0F7FA' }]}>
