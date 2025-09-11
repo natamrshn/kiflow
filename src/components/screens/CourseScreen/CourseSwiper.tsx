@@ -4,6 +4,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
 import ContentWithExample from './slides/ContentWithExample';
 import MediaPlaceholder from './slides/MediaPlaceholder';
+import QuizSlide from './slides/QuizeSlide';
 import TextSlide from './slides/TextSlide';
 import VideoPlayer from './VideoPlayer';
 
@@ -59,19 +60,16 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
           }
       
 
-    //   case 'quiz':
-    //     return (
-    //       <View key={slide.id} style={{ width, height }}>
-    //         <QuizSlide
-    //           title={slide.slide_title}
-    //           quiz={{
-    //             question: slide.content ?? '❓ Питання',
-    //             options: slide.options ?? [],
-    //           }}
-    //           isActive={isActive}
-    //         />
-    //       </View>
-    //     );
+      case 'quiz':
+        return (
+          <View key={key} style={{ width, height }}>
+            <QuizSlide
+              title={slide.slide_title}
+            //   subtitle={slide.slide_data}
+              quiz={slide.slide_data}
+            />
+          </View>
+        );
 
     //   case 'ai':
     //     return (
