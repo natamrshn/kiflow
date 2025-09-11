@@ -1,38 +1,55 @@
+import { Icon } from '@/src/components/ui/icon';
+import { AlertCircle, CheckCircle } from 'lucide-react-native';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-interface ContentWithExampleProps {
+export interface ContentWithExampleProps {
   title: string;
-  mainPoint?: string;
-  tips?: string[];
-  example?: string;
+  mainPoint: string;
+  tips: string[];
+  example: string;
 }
 
-const ContentWithExample: React.FC<ContentWithExampleProps> = ({ title, mainPoint, tips, example }) => {
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+const ContentWithExample: React.FC<ContentWithExampleProps> = ({
+  title,
+  mainPoint,
+  tips,
+  example,
+}) => {
   return (
     <View style={styles.screen}>
-      <View style={styles.container}>
-        <Text style={styles.sectionTitle}>{title.toUpperCase()}</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.card}>
+          <Icon as={AlertCircle} size={44} color="#111" style={styles.icon} />
+          <Text style={styles.title}>{title}</Text>
 
-        <View style={styles.alertRow}>
-          <Text style={styles.alertIcon}>⚠️</Text>
-          <Text style={styles.alertText}>{mainPoint}</Text>
-        </View>
+          <View style={[styles.section, { backgroundColor: 'rgba(0,0,0,0.05)' }]}>
+            <Text style={styles.mainPoint}>{mainPoint}</Text>
+          </View>
 
-        {/* <View style={styles.tips}>
-          {tips.map((t, i) => (
-            <View key={i} style={styles.tipRow}>
-              <Text style={styles.tipIcon}>✔️</Text>
-              <Text style={styles.tipText}>{t}</Text>
+          <View style={styles.section}>
+            {tips.map((tip, index) => (
+              <View key={index} style={styles.tipRow}>
+                <Icon as={CheckCircle} size={20} color="#111" style={styles.tipIcon} />
+                <Text style={styles.tipText}>{tip}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={[styles.section, { backgroundColor: 'rgba(0,0,0,0.03)' }]}>
+            <View style={styles.exampleHeader}>
+              <Icon as={AlertCircle} size={20} color="#111" style={styles.exampleIcon} />
+              <Text style={styles.exampleTitle}>Приклад</Text>
             </View>
-          ))}
-        </View> */}
-
-        <View style={styles.exampleBox}>
-          <Text style={styles.exampleTitle}>Приклад</Text>
-          <Text style={styles.exampleText}>{example}</Text>
+            <Text style={styles.exampleText}>{example}</Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -40,28 +57,77 @@ const ContentWithExample: React.FC<ContentWithExampleProps> = ({ title, mainPoin
 export default ContentWithExample;
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#ffffff', padding: 18 },
-  container: { maxWidth: 900, alignSelf: 'center', width: '100%' },
-  sectionTitle: { fontSize: 14, fontWeight: '800', marginBottom: 12, color: '#0f172a' },
-  alertRow: {
+  screen: {
+    flex: 1,
+    backgroundColor: '#f7fafc',
+    padding: 12,
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: SCREEN_WIDTH - 24,
+    maxWidth: 760,
+    borderRadius: 18,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  icon: { marginBottom: 12 },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: '#111',
+  },
+  section: {
+    marginBottom: 16,
+    borderRadius: 12,
+    padding: 12,
+  },
+  mainPoint: {
+    fontSize: 16,
+    color: '#111',
+    lineHeight: 22,
+  },
+  tipRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    padding: 14,
-    backgroundColor: 'rgba(0,0,0,0.03)',
-    borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 8,
   },
-  alertIcon: { fontSize: 20, marginRight: 10 },
-  alertText: { flex: 1, fontSize: 16, color: '#0f172a' },
-  tips: { marginBottom: 12 },
-  tipRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 8 },
-  tipIcon: { marginTop: 4, marginRight: 10 },
-  tipText: { flex: 1, color: '#0f172a' },
-  exampleBox: {
-    borderRadius: 12,
-    padding: 14,
-    backgroundColor: 'rgba(0,0,0,0.03)',
+  tipIcon: {
+    marginTop: 2,
   },
-  exampleTitle: { fontWeight: '700', marginBottom: 6 },
-  exampleText: { color: '#0f172a', lineHeight: 20 },
+  tipText: {
+    flex: 1,
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#111',
+    lineHeight: 22,
+  },
+  exampleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  exampleIcon: {},
+  exampleTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 6,
+    color: '#111',
+  },
+  exampleText: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#111',
+    lineHeight: 22,
+  },
 });

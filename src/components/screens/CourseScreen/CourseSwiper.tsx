@@ -90,6 +90,9 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
           <View key={slide.id} style={{ width, height }}>
             <ContentWithExample
               title={slide.slide_title}
+              mainPoint={slide.slide_data.mainPoint}
+              tips={slide.slide_data.tips}
+              example={slide.slide_data.example}
             />
           </View>
         );
