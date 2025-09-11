@@ -1,9 +1,11 @@
-// src/components/CourseSwiper.tsx
 import { Slide } from '@/src/constants/types/slides';
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
+import ContentWithExample from './slides/ContentWithExample';
+import MediaPlaceholder from './slides/MediaPlaceholder';
 import TextSlide from './slides/TextSlide';
+import VideoPlayer from './VideoPlayer';
 
 interface CourseSwiperProps {
   slides: Slide[];
@@ -15,6 +17,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<Animated.ScrollView | null>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(Math.max(0, initialIndex));
+
   const onScroll = useAnimatedScrollHandler({
     onScroll: event => {
       const idx = Math.round(event.contentOffset.y / height);
@@ -22,49 +25,81 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
       if (onIndexChange) runOnJS(onIndexChange)(idx);
     },
   });
+
   useEffect(() => {
     if (!slides || slides.length === 0) return;
-
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
     setCurrentIndex(safeIndex);
-
     (scrollRef.current as any)?.scrollTo?.({ y: safeIndex * height, animated: false });
   }, [slides, height, initialIndex]);
 
   const renderSlide = (slide: Slide, index: number) => {
-    const commonStyle = { 
-        width, 
-        height, 
-        justifyContent: "center" as const, 
-        alignItems: "center" as const 
-      };
+    const isActive = index === currentIndex; // визначаємо, чи активний цей слайд
+    const key = `${slide.id}-${index}`;
     switch (slide.slide_type) {
-        case 'text':
+      case 'text':
+        return (
+          <View key={key} style={{ width, height }}>
+            <TextSlide title={slide.slide_title} data={slide.slide_data ?? ''}/>
+          </View>
+        );
+
+        case 'video': {
+            const { uri, mux } = slide.slide_data.video || {};
+            const hasVideo = !!uri || !!mux;
             return (
-              <View key={slide.id} style={{ width, height }}>
-                <TextSlide title={slide.slide_title} data={slide.slide_data ?? ''} />
+              <View key={key} className='flex-1 bg-white dark:bg-neutral-900'>
+                {hasVideo ? (
+                  <VideoPlayer uri={uri ?? undefined} mux={mux ?? undefined} isActive={isActive} />
+                ) : (
+                  <MediaPlaceholder />
+                )}
               </View>
             );
-      case 'video':
+          }
+      
+
+    //   case 'quiz':
+    //     return (
+    //       <View key={slide.id} style={{ width, height }}>
+    //         <QuizSlide
+    //           title={slide.slide_title}
+    //           quiz={{
+    //             question: slide.content ?? '❓ Питання',
+    //             options: slide.options ?? [],
+    //           }}
+    //           isActive={isActive}
+    //         />
+    //       </View>
+    //     );
+
+    //   case 'ai':
+    //     return (
+    //       <View key={slide.id} style={{ width, height }}>
+    //         <AICourseChatPlaceholder
+    //           title={slide.slide_title}
+    //           currentIndex={index}
+    //           totalSlides={slides.length}
+    //           isActive={isActive}
+    //         />
+    //       </View>
+    //     );
+
+      case 'content':
         return (
-          <View key={slide.id} style={[commonStyle, { backgroundColor: '#E0F7FA' }]}>
-            <Text style={styles.slideTitle}>{slide.slide_title}</Text>
-            <Text style={styles.slideContent}>🎬 Тут буде відеоплеєр (mock)</Text>
+          <View key={slide.id} style={{ width, height }}>
+            <ContentWithExample
+              title={slide.slide_title}
+            />
           </View>
         );
-      case 'quiz':
-        return (
-          <View key={slide.id} style={[commonStyle, { backgroundColor: '#FFF3E0' }]}>
-            <Text style={styles.slideTitle}>{slide.slide_title}</Text>
-            <Text style={styles.slideContent}>❓ Коротке питання (mock)</Text>
-          </View>
-        );
-      default:
-        return (
-          <View key={slide.id} style={[commonStyle, { backgroundColor: '#fff' }]}>
-            <Text style={styles.slideTitle}>{slide.slide_title ?? 'Slide'}</Text>
-          </View>
-        );
+
+    //   default:
+    //     return (
+    //       <View key={slide.id} style={{ width, height, justifyContent: 'center', alignItems: 'center' }}>
+    //         <MediaPlaceholder message={`Слайд типу "${slide.slide_type}" ще не підтримується`}  />
+    //       </View>
+    //     );
     }
   };
 
@@ -76,12 +111,10 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
         onScroll={onScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{}}
       >
         {slides.map((s, i) => renderSlide(s, i))}
       </Animated.ScrollView>
 
-      {/* Пагінація справа */}
       <View style={[styles.pagination, { top: height * 0.2, height: height * 0.6 }]}>
         {slides.map((_, i) => {
           const active = i === currentIndex;
@@ -105,8 +138,6 @@ export default CourseSwiper;
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1, backgroundColor: '#fff' },
-  slideTitle: { fontSize: 22, fontWeight: '700', color: '#111', marginBottom: 8, textAlign: 'center' },
-  slideContent: { fontSize: 16, color: '#333', textAlign: 'center', paddingHorizontal: 10 },
   pagination: {
     position: 'absolute',
     right: 16,

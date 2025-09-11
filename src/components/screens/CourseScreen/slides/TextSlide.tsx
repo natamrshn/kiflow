@@ -12,8 +12,6 @@ interface TextSlideProps {
 }
 
 const TextSlide: React.FC<TextSlideProps> = ({ title, data }) => {
-
-  console.log(data.content)
   return (
     <View style={styles.screen}>
       <View style={styles.card}>

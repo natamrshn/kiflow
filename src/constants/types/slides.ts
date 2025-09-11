@@ -15,12 +15,18 @@ export interface TextSlide extends BaseSlide {
   };
 }
 
+interface VideoMux {
+  mux: string;
+  uri: string;
+}
+
+interface videoSlideData {
+  video: VideoMux
+}
+
 export interface VideoSlide extends BaseSlide {
   slide_type: 'video';
-  slide_data: {
-    uri?: string | null;
-    mux?: string | null;
-  };
+  slide_data: videoSlideData;
 }
 
 export interface ContentSlide extends BaseSlide {
