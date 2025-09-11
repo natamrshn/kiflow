@@ -2,7 +2,7 @@ import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
 import type { Course } from '@/src/constants/types/course';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface CourseCardProps {
@@ -11,7 +11,6 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const router = useRouter();
-  const [pressed, setPressed] = useState(false);
 
   return (
     <View style={styles.card}>
