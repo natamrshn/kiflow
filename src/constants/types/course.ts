@@ -1,18 +1,18 @@
 
 interface BaseSlide {
     id: number | string;
-    type: 'content' | 'video' | 'quiz' | 'ai' | 'completion' | 'text' | 'dashboard';
-    title?: string;
+    slide_type: 'content' | 'video' | 'quiz' | 'ai' | 'completion' | 'text' | 'dashboard';
+    slide_title?: string;
   }
   
   export interface TextSlide extends BaseSlide {
-    type: 'text';
-    title: string;
-    content: string;
+    slide_type: 'text';
+    slide_title: string;
+    slide_data: string;
   }
 
 export interface VideoSlide extends BaseSlide {
-    type: 'video';
+  slide_type: 'video';
     video: {
       uri?: string | null;
       mux?: string | null;
@@ -20,16 +20,16 @@ export interface VideoSlide extends BaseSlide {
   }
   
   export interface ContentSlide extends BaseSlide {
-    type: 'content';
-    title: string;
+    slide_type: 'content';
+    slide_title: string;
     mainPoint: string;
     tips: string[];
     example: string;
   }
   
   export interface QuizSlide extends BaseSlide {
-    type: 'quiz';
-    title: string;
+    slide_type: 'quiz';
+    slide_title: string;
     quiz: {
       question: string;
       options: string[];
@@ -38,14 +38,14 @@ export interface VideoSlide extends BaseSlide {
   }
   
   export interface AiSlide extends BaseSlide {
-    type: 'ai';
-    title: string;
+    slide_type: 'ai';
+    slide_title: string;
     prompt: string;
   }
   
   export interface CompletionSlide extends BaseSlide {
-    type: 'completion';
-    title: string;
+    slide_type: 'completion';
+    slide_title: string;
     subtitle: string;
     backgroundColor: string;
     completion: {
@@ -58,13 +58,13 @@ export interface VideoSlide extends BaseSlide {
   }
   
   export interface DashboardSlide extends BaseSlide {
-    type: 'dashboard';
-    title: string;
+    slide_type: 'dashboard';
+    slide_title: string;
     prompt: string;
   }
 
 
-export type Slide =
+ type SlideVariations =
   | VideoSlide
   | ContentSlide
   | QuizSlide

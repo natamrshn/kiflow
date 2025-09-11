@@ -6,10 +6,6 @@ export const getCourses = async (): Promise<{ data: Course[] | null; error: any 
     const { data, error } = await supabase
       .from('courses')   
       .select('*');  
-
-
-    console.log('data', data)
-
     return { data, error };
   } catch (err) {
     console.error('Error fetching courses:', err);
