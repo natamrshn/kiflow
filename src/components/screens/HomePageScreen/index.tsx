@@ -45,6 +45,10 @@ export default function HomeScreen() {
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.navText}>COMPANY DASHBOARD</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/design-system")}>
+            <Text style={styles.navText}>DESIGN SYSTEM</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
