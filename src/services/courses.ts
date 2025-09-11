@@ -1,7 +1,6 @@
 import type { Course } from '@/src/constants/types/course';
 import { supabase } from '../config/supabaseClient';
 
-// Допоміжна функція для отримання публічних курсів
 const getPublicCourses = async (): Promise<{ data: Course[] | null; error: any }> => {
   const { data, error } = await supabase
     .from('courses')
@@ -11,7 +10,6 @@ const getPublicCourses = async (): Promise<{ data: Course[] | null; error: any }
   return { data, error };
 };
 
-// Допоміжна функція для отримання курсів компаній користувача
 const getCompanyCourses = async (companyIds: string[]): Promise<Course[]> => {
   if (companyIds.length === 0) return [];
 
@@ -78,9 +76,6 @@ export const getCourses = async (): Promise<{ data: Course[] | null; error: any 
   }
 };
 
-/**
- * Отримати курси для конкретної компанії
- */
 export const getCoursesByCompany = async (companyId: string): Promise<{ data: Course[] | null; error: any }> => {
   try {
     const { data, error } = await supabase
@@ -111,4 +106,14 @@ export const getCoursesByCompany = async (companyId: string): Promise<{ data: Co
     console.error('Error fetching courses by company:', err);
     return { data: null, error: err };
   }
+};
+
+export const getCourseById = async (id: string):Promise<{data: Course |null; error: any}> => {
+  const { data, error } = await supabase
+    .from('courses')
+    .select('*')
+    .eq('id', id)
+    .single(); 
+  
+  return { data, error };
 };

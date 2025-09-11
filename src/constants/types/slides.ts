@@ -73,6 +73,13 @@ export interface DashboardSlide extends BaseSlide {
   };
 }
 
+interface FirstSlide extends BaseSlide {
+  slide_type: 'first_slide';
+  slide_data: string;
+  slide_title: string
+}
+
+
 // ---- Об’єднаний тип ----
 export type Slide =
   | TextSlide
@@ -81,7 +88,8 @@ export type Slide =
   | QuizSlide
   | AiSlide
   | CompletionSlide
-  | DashboardSlide;
+  | DashboardSlide
+  | FirstSlide;
 
 // ---- Тип для всіх можливих значень slide_type ----
 export type SlideType =
@@ -91,4 +99,5 @@ export type SlideType =
   | 'content'
   | 'completion'
   | 'ai'
-  | 'dashboard';
+  | 'dashboard'
+  | 'first_slide';

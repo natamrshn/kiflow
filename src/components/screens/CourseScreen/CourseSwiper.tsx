@@ -4,6 +4,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
 import AICourseChatPlaceholder from './slides/AiCourseChat';
 import ContentWithExample from './slides/ContentWithExample';
+import CourseIntroScreen from './slides/CourseIntroScreen';
 import MediaPlaceholder from './slides/MediaPlaceholder';
 import QuizSlide from './slides/QuizeSlide';
 import TextSlide from './slides/TextSlide';
@@ -30,11 +31,17 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
   });
 
   useEffect(() => {
-    if (!slides || slides.length === 0) return;
+    if (slides.length === 0) return;
+  
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
     setCurrentIndex(safeIndex);
-    (scrollRef.current as any)?.scrollTo?.({ y: safeIndex * height, animated: false });
+  
+    requestAnimationFrame(() => {
+      scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
+    });
   }, [slides, height, initialIndex]);
+  
+  
 
   const renderSlide = (slide: Slide, index: number) => {
     const isActive = index === currentIndex; 
@@ -83,6 +90,13 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
                 />
               </View>
             );
+            case 'first_slide':
+                
+                return (
+                  <View key={key} style={{ width, height }}>
+                    <CourseIntroScreen title={slide.slide_title} data={slide.slide_data ?? ''}/>
+                  </View>
+                );
       
 
       case 'content':
@@ -109,6 +123,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
   return (
     <View style={styles.wrapper}>
       <Animated.ScrollView
+       key={slides.length} 
         ref={scrollRef}
         pagingEnabled
         onScroll={onScroll}

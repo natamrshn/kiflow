@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     flex: 1,
+    flexShrink: 1,
     marginLeft: 8,
     fontSize: 16,
     color: '#111',

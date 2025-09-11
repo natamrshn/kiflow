@@ -1,5 +1,6 @@
 import { Module } from '@/src/constants/types/modules';
 import { Slide } from '@/src/constants/types/slides';
+import { getCourseById } from '@/src/services/courses';
 import { getModulesByCourse } from '@/src/services/modules';
 import { getSlidesByModule } from '@/src/services/slides';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -16,6 +17,8 @@ export default function CourseScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0); 
 
+
+
   useEffect(() => {
     const fetchModulesAndSlides = async () => {
       setLoading(true);
@@ -26,6 +29,24 @@ export default function CourseScreen() {
       }
 
       try {
+        const { data: courseData, error: courseError } = await getCourseById(params.id);
+        if (courseError) {
+          console.error(courseError);
+          setLoading(false);
+          return;
+        }
+        if (!courseData) return;
+
+        const firstSlide: Slide = {
+            id: 'first-slide',
+            module_id: '-1',
+            slide_order: 0,
+            slide_type: 'first_slide',
+            slide_data: courseData.description ?? '', // string
+            slide_title: courseData.title ?? 'Назва курсу',
+          };
+          
+
         const { data: fetchedModules, error: modulesError } = await getModulesByCourse(params.id);
         if (modulesError) {
           console.error(modulesError);
@@ -47,7 +68,7 @@ export default function CourseScreen() {
           }
         }
 
-        setSlides(allSlides);
+        setSlides([firstSlide, ...allSlides]);
       } catch (err) {
         console.error('Unexpected error fetching modules and slides:', err);
       } finally {
@@ -68,13 +89,14 @@ export default function CourseScreen() {
     });
   };
 
+
   return (
     <View style={styles.container}>
       <CourseSwiper
         slides={slides}
         initialIndex={params.slideIndex ? parseInt(params.slideIndex, 10) : 0}
         onIndexChange={handleSlideChange}
-        totalSlides={slides.length}
+        totalSlides={slides.length+1}
       />
     </View>
   );

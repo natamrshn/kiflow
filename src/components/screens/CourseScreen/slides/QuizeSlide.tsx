@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     width: SCREEN_WIDTH - 32,
     maxWidth: 760,
+    // flexShrink: 1
   },
   question: {
     fontSize: 20,
