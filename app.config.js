@@ -38,6 +38,12 @@ export default {
     experiments: {
       typedRoutes: true
     },
+    updates: {
+      url: "https://u.expo.dev/eb0e2192-b5ec-48ec-8215-47991c7a3e11"
+    },
+    runtimeVersion: {
+      policy: "appVersion"
+    },
     extra: {
       supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
       supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
