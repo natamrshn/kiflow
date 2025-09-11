@@ -37,7 +37,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
   }, [slides, height, initialIndex]);
 
   const renderSlide = (slide: Slide, index: number) => {
-    const isActive = index === currentIndex; // визначаємо, чи активний цей слайд
+    const isActive = index === currentIndex; 
     const key = `${slide.id}-${index}`;
     switch (slide.slide_type) {
       case 'text':
@@ -67,7 +67,6 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
           <View key={key} style={{ width, height }}>
             <QuizSlide
               title={slide.slide_title}
-            //   subtitle={slide.slide_data}
               quiz={slide.slide_data}
             />
           </View>
@@ -78,9 +77,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
               <View key={key} style={{ width, height }}>
                 <AICourseChatPlaceholder
                 title={slide.slide_title}
-                //   slideData={slideData}
                   isActive={isActive}
-                //   onComplete={onComplete}
                   currentIndex={currentIndex}
                   totalSlides={totalSlides}
                 />

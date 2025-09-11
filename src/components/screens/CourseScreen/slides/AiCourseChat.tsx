@@ -28,7 +28,6 @@ const AICourseChatPlaceholder: React.FC<AICourseChatPlaceholderProps> = ({
 
   return (
     <View style={styles.screen}>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{title}</Text>
         <Text style={styles.headerCounter}>
@@ -36,7 +35,6 @@ const AICourseChatPlaceholder: React.FC<AICourseChatPlaceholderProps> = ({
         </Text>
       </View>
 
-      {/* Chat Box */}
       <View style={styles.chatBox}>
         <ScrollView
           contentContainerStyle={styles.chatContent}
@@ -58,10 +56,6 @@ const AICourseChatPlaceholder: React.FC<AICourseChatPlaceholderProps> = ({
         </ScrollView>
       </View>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Тут будуть кнопки та стан чату (presentational)</Text>
-      </View>
     </View>
   );
 };

@@ -1,4 +1,3 @@
-// Базовий тип для всіх слайдів
 interface BaseSlide {
   id: string;
   module_id: string;

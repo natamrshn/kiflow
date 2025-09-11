@@ -14,7 +14,7 @@ export default function CourseScreen() {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0); // додаємо стейт для активного слайду
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0); 
 
   useEffect(() => {
     const fetchModulesAndSlides = async () => {
@@ -59,7 +59,7 @@ export default function CourseScreen() {
   }, [params.id]);
 
   const handleSlideChange = (index: number) => {
-    setCurrentSlideIndex(index); // оновлюємо стейт активного слайду
+    setCurrentSlideIndex(index); 
     const currentSlide = slides[index];
     const moduleIndex = modules.findIndex(mod => mod.id === currentSlide.module_id);
     router.setParams({
