@@ -45,6 +45,9 @@ export default function CourseScreen() {
             slide_data: courseData.description ?? '', // string
             slide_title: courseData.title ?? 'Назва курсу',
           };
+
+
+          console.log('firstSlide')
           
 
         const { data: fetchedModules, error: modulesError } = await getModulesByCourse(params.id);
@@ -54,8 +57,23 @@ export default function CourseScreen() {
         }
 
         if (!fetchedModules) return;
-
         setModules(fetchedModules);
+
+
+        console.log('data module', modules)
+
+        const secondSlide: Slide = {
+            id: 'second-slide',
+            module_id: '-2',
+            slide_order: 0,
+            slide_type: 'second_slide',
+            slide_data: fetchedModules.map(mod => ({
+                id: mod.id,
+                title: mod.title,
+                description: mod.description,
+              })),
+            slide_title: 'Модулі курсу',
+          };
         const allSlides: Slide[] = [];
         for (const mod of fetchedModules) {
           const { data: slidesData, error: slidesError } = await getSlidesByModule(mod.id);
@@ -68,7 +86,7 @@ export default function CourseScreen() {
           }
         }
 
-        setSlides([firstSlide, ...allSlides]);
+        setSlides([firstSlide, secondSlide, ...allSlides]);
       } catch (err) {
         console.error('Unexpected error fetching modules and slides:', err);
       } finally {

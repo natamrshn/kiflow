@@ -4,6 +4,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
 import AICourseChatPlaceholder from './slides/AiCourseChat';
 import ContentWithExample from './slides/ContentWithExample';
+import CourseContentsScreen from './slides/CourseContentsScreen';
 import CourseIntroScreen from './slides/CourseIntroScreen';
 import MediaPlaceholder from './slides/MediaPlaceholder';
 import QuizSlide from './slides/QuizeSlide';
@@ -97,6 +98,15 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
                     <CourseIntroScreen title={slide.slide_title} data={slide.slide_data ?? ''}/>
                   </View>
                 );
+
+                case 'second_slide':
+                    return (
+                      <View key={key} style={{ width, height }}>
+                        <CourseContentsScreen title={slide.slide_title} data={slide.slide_data} />
+                      </View>
+                    );
+                  
+      
       
 
       case 'content':

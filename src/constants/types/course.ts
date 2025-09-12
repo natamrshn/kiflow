@@ -1,7 +1,7 @@
 
 interface BaseSlide {
     id: number | string;
-    slide_type: 'content' | 'video' | 'quiz' | 'ai' | 'completion' | 'text' | 'dashboard';
+    slide_type: 'content' | 'video' | 'quiz' | 'ai' | 'completion' | 'text' | 'dashboard' ;
     slide_title?: string;
   }
   

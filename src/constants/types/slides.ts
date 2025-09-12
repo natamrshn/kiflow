@@ -79,6 +79,18 @@ interface FirstSlide extends BaseSlide {
   slide_title: string
 }
 
+export interface secondSlideData {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface SecondSlide extends BaseSlide {
+  slide_type: 'second_slide';
+  slide_data: secondSlideData[];
+  slide_title: string
+}
+
 
 // ---- Об’єднаний тип ----
 export type Slide =
@@ -89,7 +101,8 @@ export type Slide =
   | AiSlide
   | CompletionSlide
   | DashboardSlide
-  | FirstSlide;
+  | FirstSlide
+  | SecondSlide;
 
 // ---- Тип для всіх можливих значень slide_type ----
 export type SlideType =
@@ -100,4 +113,5 @@ export type SlideType =
   | 'completion'
   | 'ai'
   | 'dashboard'
-  | 'first_slide';
+  | 'first_slide'
+  | 'second_slide';
