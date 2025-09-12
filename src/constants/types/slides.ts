@@ -1,4 +1,3 @@
-// Базовий тип для всіх слайдів
 interface BaseSlide {
   id: string;
   module_id: string;
@@ -15,12 +14,18 @@ export interface TextSlide extends BaseSlide {
   };
 }
 
+interface VideoMux {
+  mux: string;
+  uri: string;
+}
+
+interface videoSlideData {
+  video: VideoMux
+}
+
 export interface VideoSlide extends BaseSlide {
   slide_type: 'video';
-  slide_data: {
-    uri?: string | null;
-    mux?: string | null;
-  };
+  slide_data: videoSlideData;
 }
 
 export interface ContentSlide extends BaseSlide {
@@ -68,6 +73,13 @@ export interface DashboardSlide extends BaseSlide {
   };
 }
 
+interface FirstSlide extends BaseSlide {
+  slide_type: 'first_slide';
+  slide_data: string;
+  slide_title: string
+}
+
+
 // ---- Об’єднаний тип ----
 export type Slide =
   | TextSlide
@@ -76,7 +88,8 @@ export type Slide =
   | QuizSlide
   | AiSlide
   | CompletionSlide
-  | DashboardSlide;
+  | DashboardSlide
+  | FirstSlide;
 
 // ---- Тип для всіх можливих значень slide_type ----
 export type SlideType =
@@ -86,4 +99,5 @@ export type SlideType =
   | 'content'
   | 'completion'
   | 'ai'
-  | 'dashboard';
+  | 'dashboard'
+  | 'first_slide';

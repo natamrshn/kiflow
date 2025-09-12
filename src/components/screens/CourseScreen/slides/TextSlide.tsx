@@ -1,18 +1,23 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-interface TextSlideProps {
-  title: string;
-  content: string;
+
+interface textData {
+  content: string
 }
 
-const TextSlide: React.FC<TextSlideProps> = ({ title, content }) => {
+interface TextSlideProps {
+  title: string;
+  data: textData;
+}
+
+const TextSlide: React.FC<TextSlideProps> = ({ title, data }) => {
   return (
     <View style={styles.screen}>
       <View style={styles.card}>
         <Text style={styles.icon}>📘</Text>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.content}>{content}</Text>
+        <Text style={styles.content}>{data.content}</Text>
       </View>
     </View>
   );

@@ -2,7 +2,6 @@ import { supabase } from '../config/supabaseClient';
 import { Slide } from '../constants/types/slides';
 
 export const getSlidesByModule = async (moduleId: string): Promise<{ data: Slide[] | null; error: any }> => {
-    console.log('getSlidesByModule')
     try {
       const { data, error } = await supabase
         .from('slides')

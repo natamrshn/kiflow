@@ -18,6 +18,8 @@
     "@gluestack-ui/input": "^0.1.38",
     "@gluestack-ui/nativewind-utils": "^1.0.28",
     "@gluestack-ui/textarea": "^0.1.25",
+    "@mux/mux-player": "^3.6.0",
+    "@mux/mux-player-react": "^3.6.0",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
     "@react-navigation/native": "^7.1.6",
@@ -48,6 +50,7 @@
     "react-native-web": "^0.21.0",
     "react-native-webview": "13.15.0",
     "expo-updates": "~29.0.10"
+    "expo-video": "~2.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
