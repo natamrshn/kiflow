@@ -2,7 +2,6 @@ import { Box } from '@/src/components/ui/box';
 import type MuxPlayerElement from '@mux/mux-player';
 import MuxPlayer from '@mux/mux-player-react';
 import React, { useEffect, useRef, useState } from 'react';
-
 import { useInView } from './useInView';
 
 interface VideoPlayerProps {
@@ -46,6 +45,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
     }
   }, [inView, uri, isMuted]);
 
+  // MuxPlayer: play/pause based on inView
   useEffect(() => {
     if (!mux || !muxPlayerRef.current) return;
     if (
@@ -80,13 +80,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
       // @ts-expect-error Box component type definition issue
       ref={viewRef}
       className='relative h-full w-full flex-1 items-center justify-center bg-black'
-      style={{
-        width: '100%',
-        height: '100vh',       
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
     >
       {uri ? (
         <>
@@ -106,16 +99,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
           )}
         </>
       ) : mux ? (
+        // <View>ddkd</View>
         <MuxPlayer
           ref={muxPlayerRef}
           playbackId={mux}
           streamType='on-demand'
-          style={{
-            width: 'auto',
-            height: '100%',
-            maxWidth: '100%',
-          }}
-              autoPlay={inView}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          autoPlay={inView}
           muted
         />
       ) : null}
