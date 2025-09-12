@@ -55,13 +55,6 @@ export default function HomeScreen() {
             style={styles.navButton}
           />
 
-          <Button 
-            title="DESIGN SYSTEM" 
-            variant="secondary" 
-            size="lg"
-            onPress={() => router.push("/design-system")}
-            style={styles.navButton}
-          />
         </View>
       </View>
     </View>

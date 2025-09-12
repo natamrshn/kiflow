@@ -63,13 +63,6 @@ export default function RootLayout() {
           headerShown: false 
         }} 
       />
-      <Stack.Screen 
-        name="design-system" 
-        options={{ 
-          headerShown: true,
-          title: 'Дизайн-система'
-        }} 
-      />
       <Stack.Screen name="+not-found" />
       {/* <StatusBar style="auto" /> */}
     </Stack>
