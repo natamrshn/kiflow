@@ -1,9 +1,9 @@
-import { Icon } from '@/src/components/ui/icon';
 import { Text } from '@/src/components/ui/text';
 import { View } from '@/src/components/ui/view';
 import { CheckCircle, XCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet } from 'react-native';
+
 
 type QuizData = {
   question: string;
@@ -22,22 +22,30 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const QuizSlide: React.FC<QuizProps> = ({ title, subtitle, quiz }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
-  const DEFAULT_OPTION_STYLE = styles.option;
-  const CORRECT_OPTION_STYLE = [styles.option, styles.optionCorrect];
-  const INCORRECT_OPTION_STYLE = [styles.option, styles.optionIncorrect];
-
-  const CORRECT_MESSAGE = 'Правильно!';
-  const INCORRECT_MESSAGE = 'Неправильно. Спробуйте ще раз!';
-
   const getOptionStyle = (index: number) => {
-    const isSelected = selectedAnswer === index;
-    const isCorrect = index === quiz.correctAnswer;
+    if (selectedAnswer === null) return styles.option;
 
-    if (selectedAnswer === null) return DEFAULT_OPTION_STYLE;
-    if (isCorrect) return CORRECT_OPTION_STYLE;
-    if (isSelected) return INCORRECT_OPTION_STYLE;
+    if (index === quiz.correctAnswer)
+      return StyleSheet.flatten([styles.option, styles.optionCorrect]);
 
-    return DEFAULT_OPTION_STYLE;
+    if (index === selectedAnswer && selectedAnswer !== quiz.correctAnswer)
+      return StyleSheet.flatten([styles.option, styles.optionIncorrect]);
+
+    return styles.option;
+  };
+
+  const getOptionIcon = (index: number) => {
+    if (selectedAnswer === null) return null;
+
+    if (index === quiz.correctAnswer) {
+      return <CheckCircle size={20} color="#22c55e" />;
+    }
+
+    if (index === selectedAnswer && selectedAnswer !== quiz.correctAnswer) {
+      return <XCircle size={20} color="#ef4444" />;
+    }
+
+    return null;
   };
 
   return (
@@ -60,27 +68,22 @@ const QuizSlide: React.FC<QuizProps> = ({ title, subtitle, quiz }) => {
               onPress={() => setSelectedAnswer(index)}
               disabled={selectedAnswer !== null}
             >
-              <Text style={styles.optionText}>{option}</Text>
+              <View style={styles.optionContent}>
+                {getOptionIcon(index)}
+                <Text>
+                  {option}
+                </Text>
+              </View>
             </Pressable>
           ))}
-        </View>
+        </View> 
 
         {selectedAnswer !== null && (
           <View style={styles.feedbackContainer}>
-            <Icon
-              as={selectedAnswer === quiz.correctAnswer ? CheckCircle : XCircle}
-              size={24}
-              color={selectedAnswer === quiz.correctAnswer ? '#22c55e' : '#ef4444'}
-            />
-            <Text
-              style={[
-                styles.feedbackText,
-                {
-                  color: selectedAnswer === quiz.correctAnswer ? '#22c55e' : '#ef4444',
-                },
-              ]}
-            >
-              {selectedAnswer === quiz.correctAnswer ? CORRECT_MESSAGE : INCORRECT_MESSAGE}
+            <Text >
+              {selectedAnswer === quiz.correctAnswer
+                ? 'Правильно!'
+                : 'Неправильно. Спробуйте ще раз!'}
             </Text>
           </View>
         )}
@@ -155,6 +158,11 @@ const styles = StyleSheet.create({
   optionIncorrect: {
     backgroundColor: 'rgba(239,68,68,0.3)',
     borderColor: '#ef4444',
+  },
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   optionText: {
     fontSize: 16,
