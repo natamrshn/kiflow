@@ -6,7 +6,9 @@ export const signUp = async (email: string, password: string, extra?: { name?: s
     password,
     options: {
       data: {
-        full_name: extra?.name || null
+        full_name: extra?.name || null,
+        // role: 'admin',
+        role: 'user'
       },
     },
    });
@@ -95,4 +97,13 @@ export const signInWithGoogle = async () => {
       error: err,
     };
   }
+};
+
+
+export const getUserRole = async () => {
+  const { data: { user }, error } = await supabase.auth.getUser();
+
+  if (error || !user) return null;
+
+  return user.user_metadata?.role || 'user';
 };

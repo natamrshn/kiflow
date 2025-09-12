@@ -1,17 +1,26 @@
+import { getUserRole } from "@/src/services/auth";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import Button from "../../ui/button";
 import CustomHeader from "../../ui/CustomHeader";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const userRole = await getUserRole();
+      setRole(userRole);
+    };
+
+    fetchRole();
+  }, []);
 
   return (
     <View style={styles.container}>
-      {/* Хедер */}
       <CustomHeader />
-      
-      {/* Контент по центру */}
       <View style={styles.contentContainer}>
         <View style={styles.logoSection}>
           <Image
@@ -31,35 +40,39 @@ export default function HomeScreen() {
             style={styles.navButton}
           />
 
-          <Button 
-            title="AI INSTRUCTIONS" 
-            variant="secondary" 
-            size="lg"
-            onPress={() => router.push("/instractions")}
-            style={styles.navButton}
-          />
+          {role === "admin" && (
+            <>
+              <Button 
+                title="AI INSTRUCTIONS" 
+                variant="secondary" 
+                size="lg"
+                onPress={() => router.push("/instractions")}
+                style={styles.navButton}
+              />
 
-          <Button 
-            title="REAL ESTATE SIMULATOR" 
-            variant="secondary" 
-            size="lg"
-            onPress={() => {}}
-            style={styles.navButton}
-          />
+              <Button 
+                title="REAL ESTATE SIMULATOR" 
+                variant="secondary" 
+                size="lg"
+                onPress={() => {}}
+                style={styles.navButton}
+              />
 
-          <Button 
-            title="COMPANY DASHBOARD" 
-            variant="secondary" 
-            size="lg"
-            onPress={() => {}}
-            style={styles.navButton}
-          />
-
+              <Button 
+                title="COMPANY DASHBOARD" 
+                variant="secondary" 
+                size="lg"
+                onPress={() => {}}
+                style={styles.navButton}
+              />
+            </>
+          )}
         </View>
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
