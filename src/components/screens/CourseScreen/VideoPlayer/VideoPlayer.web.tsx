@@ -1,6 +1,4 @@
 import { Box } from '@/src/components/ui/box';
-import type MuxPlayerElement from '@mux/mux-player';
-import MuxPlayer from '@mux/mux-player-react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { useInView } from './useInView';
@@ -13,27 +11,27 @@ interface VideoPlayerProps {
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const muxPlayerRef = useRef<MuxPlayerElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [needsUserInteraction, setNeedsUserInteraction] = useState(false);
   const { ref: viewRef, inView } = useInView<HTMLDivElement>({ threshold: 0.35 });
 
-  // Set playback rate for mux player
+  // Set playback rate for video player
   useEffect(() => {
-    if (mux && muxPlayerRef.current) {
-      muxPlayerRef.current.playbackRate = 1.25;
+    if (mux && videoRef.current) {
+      videoRef.current.playbackRate = 1.25;
     }
   }, [mux]);
 
-  // Native video: play/pause based on inView
+  // Video: play/pause based on inView
   useEffect(() => {
-    if (!uri) return;
     const videoElement = videoRef.current;
     if (!videoElement) return;
+    
     videoElement.playsInline = true;
     videoElement.controls = true;
     videoElement.muted = isMuted;
-    if (inView) {
+    
+    if (inView && (uri || mux)) {
       const playPromise = videoElement.play();
       if (playPromise !== undefined) {
         playPromise.catch((error: Error) => {
@@ -44,22 +42,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
     } else {
       videoElement.pause();
     }
-  }, [inView, uri, isMuted]);
-
-  // MuxPlayer: play/pause based on inView
-  useEffect(() => {
-    if (!mux || !muxPlayerRef.current) return;
-    if (
-      typeof muxPlayerRef.current.play === 'function' &&
-      typeof muxPlayerRef.current.pause === 'function'
-    ) {
-      if (inView) {
-        muxPlayerRef.current.play();
-      } else {
-        muxPlayerRef.current.pause();
-      }
-    }
-  }, [inView, mux]);
+  }, [inView, uri, mux, isMuted]);
 
   const handleUserPlay = () => {
     const videoElement = videoRef.current;
@@ -89,11 +72,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
         alignItems: 'center',
       }}
     >
-      {uri ? (
+      {(uri || mux) ? (
         <>
           <video
             ref={videoRef}
-            src={uri || undefined}
+            src={uri || (mux ? `https://stream.mux.com/${mux}.m3u8` : undefined)}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             preload='auto'
           />
@@ -106,19 +89,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
             </button>
           )}
         </>
-      ) : mux ? (
-        <MuxPlayer
-          ref={muxPlayerRef}
-          playbackId={mux}
-          streamType='on-demand'
-          style={{
-            width: 'auto',
-            height: '100%',
-            maxWidth: '100%',
-          }}
-              autoPlay={inView}
-          muted
-        />
       ) : null}
     </Box>
   );
