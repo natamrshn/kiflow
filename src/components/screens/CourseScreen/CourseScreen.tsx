@@ -88,7 +88,6 @@ export default function CourseScreen() {
     fetchModulesAndSlides();
   }, [params.id]);
 
-  // 🟢 Обробка зміни слайду
   const handleSlideChange = (index: number) => {
     const currentSlide = slides[index];
     if (!currentSlide) return;
@@ -101,7 +100,6 @@ export default function CourseScreen() {
     });
   };
 
-  // 🟢 Обчислюємо початковий індекс слайду з moduleOrder + slideOrder
   const initialIndex = (() => {
     if (params.moduleOrder && params.slideOrder) {
       const moduleOrder = parseInt(params.moduleOrder, 10);
