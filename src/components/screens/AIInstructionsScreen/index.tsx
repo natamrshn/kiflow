@@ -1,16 +1,15 @@
-import React, { useRef } from "react";
+import React from "react";
 import {
-  Animated,
   Dimensions,
-  Pressable,
   StyleSheet,
   Text
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Імпорт UI-компонентів
 import { Box } from "@/src/components/ui/box";
-import { SafeAreaView } from "@/src/components/ui/safe-area-view";
 import { ScrollView } from "@/src/components/ui/scroll-view";
+import Button from "../../ui/button";
 import Dropdown from "../../ui/dropdown/Dropdown";
 import InstructionField from "../../ui/instruction-field/InstructionField";
 
@@ -19,22 +18,14 @@ import InstructionField from "../../ui/instruction-field/InstructionField";
 const MockAIInstructionsScreen = () => {
   const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-  // Анімація кнопок (залишаємо для візуального ефекту)
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
+  const handleSaveCompany = () => {
+    // TODO: Implement save company logic
+    console.log("Saving company...");
   };
 
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      friction: 3,
-      useNativeDriver: true,
-    }).start();
+  const handleSaveCourse = () => {
+    // TODO: Implement save course logic
+    console.log("Saving course...");
   };
 
   return (
@@ -91,18 +82,13 @@ const MockAIInstructionsScreen = () => {
             />
 
             {/* Save button */}
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <Pressable
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                style={({ pressed }) => [
-                  styles.saveButton,
-                  { backgroundColor: pressed ? "#45a049" : "#4CAF50" },
-                ]}
-              >
-                <Text style={styles.saveText}>Save Company</Text>
-              </Pressable>
-            </Animated.View>
+            <Button
+              title="Save Company"
+              onPress={handleSaveCompany}
+              variant="secondary"
+              size="lg"
+              style={styles.saveButton}
+            />
 
             {/* Course */}
             <Text style={styles.sectionTitle}>Course</Text>
@@ -124,18 +110,13 @@ const MockAIInstructionsScreen = () => {
               editable={true}
             />
 
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <Pressable
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                style={({ pressed }) => [
-                  styles.saveButton,
-                  { backgroundColor: pressed ? "#45a049" : "#4CAF50" },
-                ]}
-              >
-                <Text style={styles.saveText}>Save Course</Text>
-              </Pressable>
-            </Animated.View>
+            <Button
+              title="Save Course"
+              onPress={handleSaveCourse}
+              variant="secondary"
+              size="lg"
+              style={styles.saveButton}
+            />
           </ScrollView>
         </Box>
       </ScrollView>
@@ -159,16 +140,8 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     width: "50%",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
     marginTop: 30,
     alignSelf: "center",
-  },
-  saveText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 
