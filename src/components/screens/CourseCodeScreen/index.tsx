@@ -1,18 +1,18 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-    Alert,
-    Animated,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View
 } from 'react-native';
 import { joinCompanyByCode } from '../../../services/company';
+import Button from '../../ui/button';
+import { Input, InputField } from '../../ui/input';
 
 export default function CourseCodeScreen() {
   const [courseCode, setCourseCode] = useState('');
@@ -111,20 +111,24 @@ export default function CourseCodeScreen() {
             </View>
 
             <View style={styles.formSection}>
-              <TextInput
+              <Input
+                variant="outline"
+                size="xl"
                 style={[
                   styles.input,
                   error && styles.inputError
                 ]}
-                placeholder="Код компанії"
-                placeholderTextColor="#64748b"
-                value={courseCode}
-                onChangeText={handleTextChange}
-                autoCapitalize="characters"
-                autoCorrect={false}
-                returnKeyType="done"
-                onSubmitEditing={handleConfirm}
-              />
+              >
+                <InputField
+                  placeholder="Код компанії"
+                  value={courseCode}
+                  onChangeText={handleTextChange}
+                  autoCapitalize="characters"
+                  autoCorrect={false}
+                  returnKeyType="done"
+                  onSubmitEditing={handleConfirm}
+                />
+              </Input>
 
               {/* Error Message */}
               {error && (
@@ -151,18 +155,14 @@ export default function CourseCodeScreen() {
                 </Animated.View>
               )}
 
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  (loading || !courseCode.trim()) && styles.buttonDisabled
-                ]}
+              <Button
+                title={loading ? 'Підтвердження...' : 'Підтвердити'}
+                variant="primary"
+                size="lg"
                 onPress={handleConfirm}
                 disabled={loading || !courseCode.trim()}
-              >
-                <Text style={styles.buttonText}>
-                  {loading ? 'Підтвердження...' : 'Підтвердити'}
-                </Text>
-              </TouchableOpacity>
+                style={styles.button}
+              />
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -211,42 +211,13 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   input: {
-    height: 56,
-    borderColor: '#d1d5db',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: '#ffffff',
-    color: '#1f2937',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    marginBottom: 0,
   },
   inputError: {
     borderColor: '#ef4444',
-    borderWidth: 2,
-    backgroundColor: '#fef2f2',
   },
   button: {
-    height: 56,
-    backgroundColor: '#3b82f6',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#9ca3af',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-    fontSize: 16,
+    marginTop: 0,
   },
   errorContainer: {
     marginTop: 8,

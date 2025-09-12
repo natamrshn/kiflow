@@ -9,11 +9,11 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Button from '../../ui/button';
+import { Input, InputField } from '../../ui/input';
 
 interface AuthError {
   message?: string;
@@ -104,51 +104,83 @@ export default function RegisterScreen() {
 
           <View style={styles.form}>
             {/* Name */}
-            <TextInput
-              placeholder="Full name"
-              style={[styles.input, touched.name && errors.name && styles.inputError]}
-              autoCapitalize="words"
-              value={name}
-              onChangeText={setName}
-              onBlur={() => handleBlur('name')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.name && errors.name && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Full name"
+                autoCapitalize="words"
+                value={name}
+                onChangeText={setName}
+                onBlur={() => handleBlur('name')}
+              />
+            </Input>
             {touched.name && errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
 
             {/* Email */}
-            <TextInput
-              placeholder="Email"
-              style={[styles.input, touched.email && errors.email && styles.inputError]}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={email}
-              onChangeText={setEmail}
-              onBlur={() => handleBlur('email')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.email && errors.email && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+                onBlur={() => handleBlur('email')}
+              />
+            </Input>
             {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
             {/* Password */}
-            <TextInput
-              placeholder="Password"
-              style={[styles.input, touched.password && errors.password && styles.inputError]}
-              secureTextEntry
-              autoCapitalize="none"
-              value={password}
-              onChangeText={setPassword}
-              onBlur={() => handleBlur('password')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.password && errors.password && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Password"
+                secureTextEntry
+                autoCapitalize="none"
+                value={password}
+                onChangeText={setPassword}
+                onBlur={() => handleBlur('password')}
+              />
+            </Input>
             {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
             {/* Confirm Password */}
-            <TextInput
-              placeholder="Confirm Password"
-              style={[styles.input, touched.confirmPassword && errors.confirmPassword && styles.inputError]}
-              secureTextEntry
-              autoCapitalize="none"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              onBlur={() => handleBlur('confirmPassword')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.confirmPassword && errors.confirmPassword && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Confirm Password"
+                secureTextEntry
+                autoCapitalize="none"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                onBlur={() => handleBlur('confirmPassword')}
+              />
+            </Input>
             {touched.confirmPassword && errors.confirmPassword && (
               <Text style={styles.errorText}>{errors.confirmPassword}</Text>
             )}
@@ -184,12 +216,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   form: { width: '100%', maxWidth: 400 },
   input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 6,
-    paddingHorizontal: 12,
+    marginBottom: 14,
   },
   inputError: {
     borderColor: 'red',
@@ -201,7 +228,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   button: {
-    marginTop: 12,
+    marginTop: 16,
   },
   registerContainer: {
     flexDirection: 'row',

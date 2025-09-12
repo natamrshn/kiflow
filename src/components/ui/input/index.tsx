@@ -1,14 +1,96 @@
 'use client';
-import React from 'react';
-import { createInput } from '@gluestack-ui/input';
-import { View, Pressable, TextInput } from 'react-native';
-import { tva } from '@gluestack-ui/nativewind-utils/tva';
-import { withStyleContext, useStyleContext } from '@gluestack-ui/nativewind-utils/withStyleContext';
-import { cssInterop } from 'nativewind';
-import type { VariantProps } from '@gluestack-ui/nativewind-utils';
 import { PrimitiveIcon, UIIcon } from '@gluestack-ui/icon';
+import { createInput } from '@gluestack-ui/input';
+import { useStyleContext, withStyleContext } from '@gluestack-ui/nativewind-utils/withStyleContext';
+import * as Haptics from 'expo-haptics';
+import { cssInterop } from 'nativewind';
+import React from 'react';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Colors } from '../../../constants/Colors';
 
 const SCOPE = 'INPUT';
+
+// Используем цвета из константы Colors
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    borderWidth: 1,
+    borderColor: Colors.gray[200],
+    borderRadius: 8,
+    backgroundColor: Colors.white,
+    flexDirection: 'row',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  inputContainerFocused: {
+    borderColor: Colors.gray[400],
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  inputContainerHover: {
+    borderColor: Colors.gray[300],
+  },
+  inputContainerDisabled: {
+    opacity: 0.4,
+  },
+  inputField: {
+    flex: 1,
+    color: Colors.black,
+    fontSize: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    height: '100%',
+  },
+  inputFieldUnderlined: {
+    paddingHorizontal: 0,
+  },
+  inputFieldRounded: {
+    paddingHorizontal: 16,
+  },
+  inputIcon: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: Colors.gray[500],
+  },
+  inputSlot: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // Размеры (улучшены для лучших touch-целей)
+  sizeXl: {
+    height: 56,
+    minHeight: 56,
+  },
+  sizeLg: {
+    height: 48,
+    minHeight: 48,
+  },
+  sizeMd: {
+    height: 44,
+    minHeight: 44,
+  },
+  sizeSm: {
+    height: 44,
+    minHeight: 44,
+  },
+  // Варианты
+  variantUnderlined: {
+    borderRadius: 0,
+    borderBottomWidth: 1,
+    borderWidth: 0,
+  },
+  variantOutline: {
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  variantRounded: {
+    borderRadius: 20,
+    borderWidth: 1,
+  },
+});
 
 const UIInput = createInput({
   Root: withStyleContext(View, SCOPE),
@@ -30,163 +112,133 @@ cssInterop(PrimitiveIcon, {
   },
 });
 
-const inputStyle = tva({
-  base: 'border-neutral-300 flex-row overflow-hidden content-center data-[hover=true]:border-neutral-400 data-[focus=true]:border-primary-500 data-[focus=true]:shadow-sm data-[focus=true]:hover:border-primary-500 data-[disabled=true]:opacity-40 data-[disabled=true]:cursor-not-allowed data-[disabled=true]:hover:border-neutral-300 items-center transition-all duration-200',
+// Типы для размеров и вариантов
+type InputSize = 'sm' | 'md' | 'lg' | 'xl';
+type InputVariant = 'outline' | 'underlined' | 'rounded';
 
-  variants: {
-    size: {
-      xl: 'h-12 min-h-[3rem]',
-      lg: 'h-11 min-h-[2.75rem]',
-      md: 'h-10 min-h-[2.5rem]',
-      sm: 'h-9 min-h-[2.25rem]',
-    },
+type IInputProps = React.ComponentProps<typeof UIInput> & { 
+  className?: string;
+  style?: any;
+  variant?: InputVariant;
+  size?: InputSize;
+  hapticFeedback?: boolean;
+};
 
-    variant: {
-      underlined:
-        'rounded-none border-b data-[invalid=true]:border-b-2 data-[invalid=true]:border-red-500 data-[invalid=true]:hover:border-red-600 data-[invalid=true]:data-[focus=true]:border-red-500 data-[invalid=true]:data-[focus=true]:hover:border-red-600 data-[invalid=true]:data-[disabled=true]:hover:border-red-500',
-
-      outline:
-        'rounded-md border data-[invalid=true]:border-red-500 data-[invalid=true]:hover:border-red-600 data-[invalid=true]:data-[focus=true]:border-red-500 data-[invalid=true]:data-[focus=true]:hover:border-red-600 data-[invalid=true]:data-[disabled=true]:hover:border-red-500 data-[focus=true]:web:ring-1 data-[focus=true]:web:ring-inset data-[focus=true]:web:ring-primary-400 data-[invalid=true]:web:ring-1 data-[invalid=true]:web:ring-inset data-[invalid=true]:web:ring-red-400 data-[invalid=true]:data-[focus=true]:hover:web:ring-1 data-[invalid=true]:data-[focus=true]:hover:web:ring-inset data-[invalid=true]:data-[focus=true]:hover:web:ring-red-400 data-[invalid=true]:data-[disabled=true]:hover:web:ring-1 data-[invalid=true]:data-[disabled=true]:hover:web:ring-inset data-[invalid=true]:data-[disabled=true]:hover:web:ring-red-400',
-
-      rounded:
-        'rounded-full border data-[invalid=true]:border-red-500 data-[invalid=true]:hover:border-red-600 data-[invalid=true]:data-[focus=true]:border-red-500 data-[invalid=true]:data-[focus=true]:hover:border-red-600 data-[invalid=true]:data-[disabled=true]:hover:border-red-500 data-[focus=true]:web:ring-1 data-[focus=true]:web:ring-inset data-[focus=true]:web:ring-primary-400 data-[invalid=true]:web:ring-1 data-[invalid=true]:web:ring-inset data-[invalid=true]:web:ring-red-400 data-[invalid=true]:data-[focus=true]:hover:web:ring-1 data-[invalid=true]:data-[focus=true]:hover:web:ring-inset data-[invalid=true]:data-[focus=true]:hover:web:ring-red-400 data-[invalid=true]:data-[disabled=true]:hover:web:ring-1 data-[invalid=true]:data-[disabled=true]:hover:web:ring-inset data-[invalid=true]:data-[disabled=true]:hover:web:ring-red-400',
-    },
-  },
-});
-
-const inputIconStyle = tva({
-  base: 'justify-center items-center text-typography-400 fill-none',
-  parentVariants: {
-    size: {
-      '2xs': 'h-3 w-3',
-      xs: 'h-3.5 w-3.5',
-      sm: 'h-4 w-4',
-      md: 'h-[18px] w-[18px]',
-      lg: 'h-5 w-5',
-      xl: 'h-6 w-6',
-    },
-  },
-});
-
-const inputSlotStyle = tva({
-  base: 'justify-center items-center web:disabled:cursor-not-allowed',
-});
-
-const inputFieldStyle = tva({
-  base: 'flex-1 text-typography-900 py-0 px-3 placeholder:text-neutral-400 h-full ios:leading-[0px] web:cursor-text web:data-[disabled=true]:cursor-not-allowed',
-
-  parentVariants: {
-    variant: {
-      underlined: 'web:outline-0 web:outline-none px-0',
-      outline: 'web:outline-0 web:outline-none',
-      rounded: 'web:outline-0 web:outline-none px-4',
-    },
-
-    size: {
-      '2xs': 'text-2xs',
-      xs: 'text-xs',
-      sm: 'text-sm',
-      md: 'text-base',
-      lg: 'text-lg',
-      xl: 'text-xl',
-      '2xl': 'text-2xl',
-      '3xl': 'text-3xl',
-      '4xl': 'text-4xl',
-      '5xl': 'text-5xl',
-      '6xl': 'text-6xl',
-    },
-  },
-});
-
-type IInputProps = React.ComponentProps<typeof UIInput> &
-  VariantProps<typeof inputStyle> & { className?: string };
 const Input = React.forwardRef<React.ComponentRef<typeof UIInput>, IInputProps>(function Input(
-  { className, variant = 'outline', size = 'md', ...props },
+  { className, variant = 'outline', size = 'md', style, hapticFeedback = true, ...props },
   ref
 ) {
+  // Обработчик для haptic feedback
+  const handleFocus = (event: any) => {
+    if (hapticFeedback) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    }
+    if (props.onFocus) {
+      props.onFocus(event);
+    }
+  };
+
+  // Комбинируем стили из StyleSheet
+  const containerStyle = [
+    styles.inputContainer,
+    styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}` as keyof typeof styles],
+    styles[`variant${variant.charAt(0).toUpperCase() + variant.slice(1)}` as keyof typeof styles],
+    style,
+  ];
+
   return (
     <UIInput
       ref={ref}
       {...props}
-      className={inputStyle({ variant, size, class: className })}
+      style={containerStyle}
       context={{ variant, size }}
+      onFocus={handleFocus}
     />
   );
 });
 
-type IInputIconProps = React.ComponentProps<typeof UIInput.Icon> &
-  VariantProps<typeof inputIconStyle> & {
-    className?: string;
-    height?: number;
-    width?: number;
-  };
+type IInputIconProps = React.ComponentProps<typeof UIInput.Icon> & {
+  className?: string;
+  height?: number;
+  width?: number;
+  style?: any;
+  size?: number | InputSize;
+};
 
 const InputIcon = React.forwardRef<React.ComponentRef<typeof UIInput.Icon>, IInputIconProps>(
-  function InputIcon({ className, size, ...props }, ref) {
-    const { size: parentSize } = useStyleContext(SCOPE);
+  function InputIcon({ className, size, style, ...props }, ref) {
+    const iconStyle = [
+      styles.inputIcon,
+      style,
+    ];
 
     if (typeof size === 'number') {
       return (
         <UIInput.Icon
           ref={ref}
           {...props}
-          className={inputIconStyle({ class: className })}
+          style={iconStyle}
           size={size}
         />
       );
     } else if ((props.height !== undefined || props.width !== undefined) && size === undefined) {
-      return <UIInput.Icon ref={ref} {...props} className={inputIconStyle({ class: className })} />;
+      return <UIInput.Icon ref={ref} {...props} style={iconStyle} />;
     }
     return (
       <UIInput.Icon
         ref={ref}
         {...props}
-        className={inputIconStyle({
-          parentVariants: {
-            size: parentSize,
-          },
-          class: className,
-        })}
+        style={iconStyle}
       />
     );
   }
 );
 
-type IInputSlotProps = React.ComponentProps<typeof UIInput.Slot> &
-  VariantProps<typeof inputSlotStyle> & { className?: string };
+type IInputSlotProps = React.ComponentProps<typeof UIInput.Slot> & { 
+  className?: string;
+  style?: any;
+};
 
 const InputSlot = React.forwardRef<React.ComponentRef<typeof UIInput.Slot>, IInputSlotProps>(
-  function InputSlot({ className, ...props }, ref) {
+  function InputSlot({ className, style, ...props }, ref) {
+    const slotStyle = [
+      styles.inputSlot,
+      style,
+    ];
+
     return (
       <UIInput.Slot
         ref={ref}
         {...props}
-        className={inputSlotStyle({
-          class: className,
-        })}
+        style={slotStyle}
       />
     );
   }
 );
 
-type IInputFieldProps = React.ComponentProps<typeof UIInput.Input> &
-  VariantProps<typeof inputFieldStyle> & { className?: string };
+type IInputFieldProps = React.ComponentProps<typeof UIInput.Input> & { 
+  className?: string;
+  style?: any;
+};
 
 const InputField = React.forwardRef<React.ComponentRef<typeof UIInput.Input>, IInputFieldProps>(
-  function InputField({ className, ...props }, ref) {
-    const { variant: parentVariant, size: parentSize } = useStyleContext(SCOPE);
+  function InputField({ className, style, ...props }, ref) {
+    const { variant: parentVariant } = useStyleContext(SCOPE);
+
+    // Комбинируем стили для поля ввода
+    const fieldStyle = [
+      styles.inputField,
+      parentVariant === 'underlined' && styles.inputFieldUnderlined,
+      parentVariant === 'rounded' && styles.inputFieldRounded,
+      style,
+    ];
 
     return (
       <UIInput.Input
         ref={ref}
         {...props}
-        className={inputFieldStyle({
-          parentVariants: {
-            variant: parentVariant,
-            size: parentSize,
-          },
-          class: className,
-        })}
+        style={fieldStyle}
+        placeholderTextColor={Colors.gray[400]}
       />
     );
   }

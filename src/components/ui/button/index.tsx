@@ -1,5 +1,7 @@
+import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Colors } from '../../../constants/Colors';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -14,6 +16,7 @@ interface ButtonProps {
   imagePosition?: 'left' | 'right';
   style?: any;
   textStyle?: any;
+  hapticFeedback?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -26,7 +29,31 @@ const Button: React.FC<ButtonProps> = ({
   imagePosition = 'left',
   style,
   textStyle,
+  hapticFeedback = true,
 }) => {
+  const handlePress = () => {
+    if (hapticFeedback && !disabled) {
+      // Используем разные типы haptic feedback в зависимости от варианта кнопки
+      switch (variant) {
+        case 'primary':
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        case 'secondary':
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          break;
+        case 'success':
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          break;
+        case 'error':
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          break;
+        default:
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      }
+    }
+    onPress();
+  };
+
   const buttonStyle = [
     styles.base,
     styles[variant],
@@ -49,7 +76,7 @@ const Button: React.FC<ButtonProps> = ({
         ...buttonStyle,
         pressed && styles.pressed,
       ]}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
     >
       <View style={styles.content}>
@@ -71,7 +98,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -107,37 +134,38 @@ const styles = StyleSheet.create({
 
   // Variants
   primary: {
-    backgroundColor: '#000000',
-    borderWidth: 0,
+    backgroundColor: Colors.black,
+    borderWidth: 2,
+    borderColor: Colors.black,
   },
   secondary: {
     backgroundColor: 'transparent',
     borderWidth: 2,
-    borderColor: '#000000',
+    borderColor: Colors.black,
   },
   success: {
-    backgroundColor: '#10B981',
+    backgroundColor: Colors.success,
     borderWidth: 0,
   },
   error: {
-    backgroundColor: '#EF4444',
+    backgroundColor: Colors.error,
     borderWidth: 0,
   },
 
   // Text colors for variants
   primaryText: {
-    color: '#FFFFFF',
+    color: Colors.white,
   },
   secondaryText: {
-    color: '#000000',
+    color: Colors.black,
     fontWeight: '700',
     letterSpacing: 0.8,
   },
   successText: {
-    color: '#FFFFFF',
+    color: Colors.white,
   },
   errorText: {
-    color: '#FFFFFF',
+    color: Colors.white,
   },
 
   // Sizes

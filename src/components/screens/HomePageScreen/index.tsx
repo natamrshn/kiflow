@@ -1,26 +1,18 @@
-import { Stack, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Image, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Button from "../../ui/button";
 import CustomHeader from "../../ui/CustomHeader";
-import { SafeAreaView } from "../../ui/safe-area-view";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Хедер */}
-      <Stack.Screen
-        name="index"
-        options={{
-          header: () => <CustomHeader />,
-        }}
-      />
-
+      <CustomHeader />
+      
       {/* Контент по центру */}
-      <View style={[styles.contentContainer, { paddingTop: insets.top > 0 ? 0 : 20 }]}>
+      <View style={styles.contentContainer}>
         <View style={styles.logoSection}>
           <Image
             source={require("@/src/assets/images/kiflow-logo.jpeg")}
@@ -72,12 +64,13 @@ export default function HomeScreen() {
           />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ffffff',
     flex: 1,
   },
   contentContainer: {
@@ -85,6 +78,7 @@ const styles = StyleSheet.create({
     justifyContent: "center", // центрування по вертикалі
     alignItems: "center", // центрування по горизонталі
     paddingHorizontal: 16,
+    paddingTop: 20,
   },
   logoSection: {
     alignItems: "center",
