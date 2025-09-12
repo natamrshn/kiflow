@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -9,11 +8,11 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { joinCompanyByCode } from '../../../services/company';
+import Button from '../../ui/button';
+import { Input, InputField } from '../../ui/input';
 
 export default function CourseCodeScreen() {
   const [courseCode, setCourseCode] = useState('');
@@ -98,33 +97,30 @@ export default function CourseCodeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#f8fafc', '#e2e8f0']}
-        style={styles.backgroundGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          <KeyboardAvoidingView 
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.keyboardView}
-          >
-            <View style={styles.contentContainer}>
-              <View style={styles.titleSection}>
-                <Text style={styles.title}>Введіть код</Text>
-                <Text style={styles.subtitle}>
-                  Введіть код компанії, щоб отримати доступ до її курсів
-                </Text>
-              </View>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
+        >
+          <View style={styles.contentContainer}>
+            <View style={styles.titleSection}>
+              <Text style={styles.title}>Введіть код</Text>
+              <Text style={styles.subtitle}>
+                Введіть код компанії, щоб отримати доступ до її курсів
+              </Text>
+            </View>
 
-              <View style={styles.formSection}>
-                <TextInput
-                  style={[
-                    styles.input,
-                    error && styles.inputError
-                  ]}
+            <View style={styles.formSection}>
+              <Input
+                variant="outline"
+                size="xl"
+                style={[
+                  styles.input,
+                  error && styles.inputError
+                ]}
+              >
+                <InputField
                   placeholder="Код компанії"
-                  placeholderTextColor="#64748b"
                   value={courseCode}
                   onChangeText={handleTextChange}
                   autoCapitalize="characters"
@@ -132,49 +128,45 @@ export default function CourseCodeScreen() {
                   returnKeyType="done"
                   onSubmitEditing={handleConfirm}
                 />
+              </Input>
 
-                {/* Error Message */}
-                {error && (
-                  <Animated.View
-                    style={[
-                      styles.errorContainer,
-                      {
-                        opacity: errorAnimation,
-                        transform: [
-                          {
-                            translateY: errorAnimation.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [-10, 0],
-                            }),
-                          },
-                        ],
-                      },
-                    ]}
-                  >
-                    <View style={styles.errorContent}>
-                      <Text style={styles.errorIcon}>⚠️</Text>
-                      <Text style={styles.errorText}>{error}</Text>
-                    </View>
-                  </Animated.View>
-                )}
-
-                <TouchableOpacity
+              {/* Error Message */}
+              {error && (
+                <Animated.View
                   style={[
-                    styles.button,
-                    (loading || !courseCode.trim()) && styles.buttonDisabled
+                    styles.errorContainer,
+                    {
+                      opacity: errorAnimation,
+                      transform: [
+                        {
+                          translateY: errorAnimation.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [-10, 0],
+                          }),
+                        },
+                      ],
+                    },
                   ]}
-                  onPress={handleConfirm}
-                  disabled={loading || !courseCode.trim()}
                 >
-                  <Text style={styles.buttonText}>
-                    {loading ? 'Підтвердження...' : 'Підтвердити'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  <View style={styles.errorContent}>
+                    <Text style={styles.errorIcon}>⚠️</Text>
+                    <Text style={styles.errorText}>{error}</Text>
+                  </View>
+                </Animated.View>
+              )}
+
+              <Button
+                title={loading ? 'Підтвердження...' : 'Підтвердити'}
+                variant="primary"
+                size="lg"
+                onPress={handleConfirm}
+                disabled={loading || !courseCode.trim()}
+                style={styles.button}
+              />
             </View>
-          </KeyboardAvoidingView>
-        </SafeAreaView>
-      </LinearGradient>
+          </View>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     </View>
   );
 }
@@ -183,9 +175,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  backgroundGradient: {
-    flex: 1,
   },
   safeArea: {
     flex: 1,
@@ -222,42 +211,13 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   input: {
-    height: 56,
-    borderColor: '#d1d5db',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    backgroundColor: '#ffffff',
-    color: '#1f2937',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    marginBottom: 0,
   },
   inputError: {
     borderColor: '#ef4444',
-    borderWidth: 2,
-    backgroundColor: '#fef2f2',
   },
   button: {
-    height: 56,
-    backgroundColor: '#3b82f6',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#9ca3af',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-    fontSize: 16,
+    marginTop: 0,
   },
   errorContainer: {
     marginTop: 8,

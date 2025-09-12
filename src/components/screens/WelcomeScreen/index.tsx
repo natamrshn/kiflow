@@ -1,13 +1,13 @@
-import { useIsGuestUser } from '@/src/hooks/auth/useIsGuestUser';
-import { LinearGradient } from 'expo-linear-gradient';
+// import { useIsGuestUser } from '@/src/hooks/auth/useIsGuestUser';
 import { useRouter } from 'expo-router';
-import React, { useEffect } from 'react';
-import { Image, Text as RNText, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { Image, Text as RNText, StyleSheet, View } from 'react-native';
+import Button from '../../ui/button';
 
 export default function WelcomeScreen() {
   const router = useRouter();
-  const isGuestValue = useIsGuestUser();
-  const isGuest = isGuestValue === null ? true : isGuestValue;
+  // const isGuestValue = useIsGuestUser();
+  // const isGuest = isGuestValue === null ? true : isGuestValue;
 
   // useEffect(()=>{
   //   if(!isGuest){
@@ -26,37 +26,38 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#f8fafc', '#e2e8f0']}
-        style={styles.backgroundGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.contentContainer}>
-          <View style={styles.logoSection}>
-            <Image
-              source={require("@/src/assets/images/kiflow-logo.jpeg")}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-            <RNText style={styles.welcomeText}>
-              Welcome to Kiflow
-            </RNText>
-            <RNText style={styles.subtitleText}>
-              Your gateway to online education
-            </RNText>
-          </View>
-          <View style={styles.buttonSection}>
-            <TouchableOpacity style={styles.navButton} onPress={handleSignIn}>
-              <RNText style={styles.navText}>Sign In</RNText>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.navButton} onPress={handleSignUp}>
-              <RNText style={styles.navText}>Sign Up</RNText>
-            </TouchableOpacity>
-          </View>
+      <View style={styles.contentContainer}>
+        <View style={styles.logoSection}>
+          <Image
+            source={require("@/src/assets/images/kiflow-logo.jpeg")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <RNText style={styles.welcomeText}>
+            Welcome to Kiflow
+          </RNText>
+          <RNText style={styles.subtitleText}>
+            Your gateway to online education
+          </RNText>
         </View>
-      </LinearGradient>
+        <View style={styles.buttonSection}>
+          <Button 
+            title="Sign In" 
+            variant="primary" 
+            size="lg"
+            onPress={handleSignIn}
+            style={styles.navButton}
+          />
+
+          <Button 
+            title="Sign Up" 
+            variant="secondary" 
+            size="lg"
+            onPress={handleSignUp}
+            style={styles.navButton}
+          />
+        </View>
+      </View>
     </View>
   );
 }
@@ -65,9 +66,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  backgroundGradient: {
-    flex: 1,
   },
   contentContainer: {
     flex: 1,
@@ -104,16 +102,6 @@ const styles = StyleSheet.create({
     marginTop: 128,
   },
   navButton: {
-    backgroundColor: '#d1d5db',
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     width: '80%',
-    alignItems: 'center',
-  },
-  navText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#475569',
   },
 });

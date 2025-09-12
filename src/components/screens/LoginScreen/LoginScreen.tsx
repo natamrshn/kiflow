@@ -10,10 +10,11 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from 'react-native';
+import Button from '../../ui/button';
+import { Input, InputField } from '../../ui/input';
 
 interface AuthError {
   message?: string;
@@ -92,34 +93,55 @@ export default function LoginScreen() {
 
           <View style={styles.form}>
             {/* Email */}
-            <TextInput
-              placeholder="Email"
-              style={[styles.input, touched.email && errors.email && styles.inputError]}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              value={email}
-              onChangeText={setEmail}
-              onBlur={() => handleBlur('email')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.email && errors.email && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+                value={email}
+                onChangeText={setEmail}
+                onBlur={() => handleBlur('email')}
+              />
+            </Input>
             {touched.email && errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
             {/* Password */}
-            <TextInput
-              placeholder="Password"
-              style={[styles.input, touched.password && errors.password && styles.inputError]}
-              secureTextEntry
-              autoCapitalize="none"
-              value={password}
-              onChangeText={setPassword}
-              onBlur={() => handleBlur('password')}
-            />
+            <Input
+              variant="outline"
+              size="xl"
+              style={[
+                styles.input,
+                touched.password && errors.password && styles.inputError
+              ]}
+            >
+              <InputField
+                placeholder="Password"
+                secureTextEntry
+                autoCapitalize="none"
+                value={password}
+                onChangeText={setPassword}
+                onBlur={() => handleBlur('password')}
+              />
+            </Input>
             {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
             {/* Button */}
-            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-              <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
-            </TouchableOpacity>
+            <Button 
+              title={loading ? 'Signing in...' : 'Sign In'} 
+              variant="primary" 
+              size="lg"
+              onPress={handleLogin} 
+              disabled={loading}
+              style={styles.button}
+            />
 
             {/* Registration link */}
             <View style={styles.registerContainer}>
@@ -142,12 +164,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   form: { width: '100%', maxWidth: 400 },
   input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 6,
-    paddingHorizontal: 12,
+    marginBottom: 14,
   },
   inputError: {
     borderColor: 'red',
@@ -159,14 +176,8 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   button: {
-    height: 50,
-    backgroundColor: '#4CAF50',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 12,
+    marginTop: 16,
   },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -177,7 +188,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerLink: {
-    color: '#4CAF50',
+    color: '#000000',
     fontWeight: '600',
     fontSize: 14,
   },

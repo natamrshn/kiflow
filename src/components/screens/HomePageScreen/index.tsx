@@ -1,25 +1,18 @@
-import { Stack, useRouter } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { Image, StyleSheet, Text, View } from "react-native";
+import Button from "../../ui/button";
 import CustomHeader from "../../ui/CustomHeader";
-import { SafeAreaView } from "../../ui/safe-area-view";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* Хедер */}
-      <Stack.Screen
-        name="index"
-        options={{
-          header: () => <CustomHeader />,
-        }}
-      />
-
+      <CustomHeader />
+      
       {/* Контент по центру */}
-      <View style={[styles.contentContainer, { paddingTop: insets.top > 0 ? 0 : 20 }]}>
+      <View style={styles.contentContainer}>
         <View style={styles.logoSection}>
           <Image
             source={require("@/src/assets/images/kiflow-logo.jpeg")}
@@ -30,37 +23,55 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.navSection}>
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/courses/")} >
-            <Text style={styles.navText}>COURSES</Text>
-          </TouchableOpacity>
+          <Button 
+            title="COURSES" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => router.push("/courses/")}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton} onPress={() => router.push("/instractions")}>
-            <Text style={styles.navText}>AI INSTRUCTIONS</Text>
-          </TouchableOpacity>
+          <Button 
+            title="AI INSTRUCTIONS" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => router.push("/instractions")}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navText}>REAL ESTATE SIMULATOR</Text>
-          </TouchableOpacity>
+          <Button 
+            title="REAL ESTATE SIMULATOR" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => {}}
+            style={styles.navButton}
+          />
 
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.navText}>COMPANY DASHBOARD</Text>
-          </TouchableOpacity>
+          <Button 
+            title="COMPANY DASHBOARD" 
+            variant="secondary" 
+            size="lg"
+            onPress={() => {}}
+            style={styles.navButton}
+          />
+
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#ffffff',
     flex: 1,
-    backgroundColor: "#fff",
   },
   contentContainer: {
     flex: 1,
     justifyContent: "center", // центрування по вертикалі
     alignItems: "center", // центрування по горизонталі
     paddingHorizontal: 16,
+    paddingTop: 20,
   },
   logoSection: {
     alignItems: "center",
@@ -81,15 +92,6 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   navButton: {
-    backgroundColor: "#eee",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     width: "80%",
-    alignItems: "center",
-  },
-  navText: {
-    fontSize: 16,
-    fontWeight: "600",
   },
 });
