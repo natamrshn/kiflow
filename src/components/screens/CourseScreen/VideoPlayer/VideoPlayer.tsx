@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
 import { Box } from '@/src/components/ui/box';
-import { useVideoPlayer, VideoView } from 'expo-video';
 import { useEvent } from 'expo';
+import { useVideoPlayer, VideoView } from 'expo-video';
+import React, { useEffect } from 'react';
 
 interface VideoPlayerProps {
   uri?: string;

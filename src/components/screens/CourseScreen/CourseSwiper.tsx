@@ -178,6 +178,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 6,
   },
-  dotActive: { backgroundColor: '#000000' },
+  dotActive: { backgroundColor: '#4CAF50' },
   dotInactive: { backgroundColor: '#CFCFCF' },
 });
