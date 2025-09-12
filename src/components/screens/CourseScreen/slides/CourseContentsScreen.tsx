@@ -12,10 +12,11 @@ export default function CourseContentsScreen({ title, data }: CourseContentsScre
   const params = useLocalSearchParams<{ id?: string }>();
 
   const handleModulePress = (module: secondSlideData) => {
-    const moduleIndex = data.findIndex(m => m.id === module.id);
-
+    // Знаходимо порядковий номер (order) модуля
+    const moduleOrder = data.findIndex(m => m.id === module.id) + 1; // +1 бо order починається з 1
+  
     router.push(
-      `/courses/${params.id}?slideIndex=0&moduleIndex=${moduleIndex}`
+      `/courses/${params.id}?moduleOrder=${moduleOrder}&slideOrder=1`
     );
   };
 
