@@ -1,38 +1,28 @@
-import { Module } from '@/src/constants/types/modules';
-import { getModulesByCourse } from '@/src/services/modules';
+import { useCourseStore } from '@/src/stores';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function CourseScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
   const router = useRouter();
-  const [modules, setModules] = useState<Module[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    modules, 
+    isModulesLoading, 
+    error, 
+    fetchModulesByCourse, 
+    clearError 
+  } = useCourseStore();
 
   useEffect(() => {
     if (!params.id) return;
 
-    const fetchModules = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await getModulesByCourse(params.id!);
-        if (error) {
-          console.error(error);
-          return;
-        }
-        if (data) setModules(data);
-      } catch (err) {
-        console.error('Unexpected error fetching modules:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchModulesByCourse(params.id).catch(err => {
+      console.error('Unexpected error fetching modules:', err);
+    });
+  }, [params.id, fetchModulesByCourse]);
 
-    fetchModules();
-  }, [params.id]);
-
-  const handleModulePress = (module: Module) => {
+  const handleModulePress = (module: any) => {
     router.push({
       pathname: '/module/[id]',
       params: { id: module.id }, 
@@ -41,18 +31,36 @@ export default function CourseScreen() {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={modules}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <Pressable style={styles.moduleItem} onPress={() => handleModulePress(item)}>
-            <Text style={styles.moduleTitle}>{item.title}</Text>
-            {item.description ? (
-              <Text style={styles.moduleDescription}>{item.description}</Text>
-            ) : null}
-          </Pressable>
-        )}
-      />
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Помилка: {error}</Text>
+          <Text style={styles.retryText} onPress={() => {
+            clearError();
+            if (params.id) {
+              fetchModulesByCourse(params.id);
+            }
+          }}>
+            Спробувати знову
+          </Text>
+        </View>
+      ) : isModulesLoading ? (
+        <Text style={styles.loadingText}>Завантаження модулів...</Text>
+      ) : modules.length === 0 ? (
+        <Text style={styles.loadingText}>Модулі не знайдено</Text>
+      ) : (
+        <FlatList
+          data={modules}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <Pressable style={styles.moduleItem} onPress={() => handleModulePress(item)}>
+              <Text style={styles.moduleTitle}>{item.title}</Text>
+              {item.description ? (
+                <Text style={styles.moduleDescription}>{item.description}</Text>
+              ) : null}
+            </Pressable>
+          )}
+        />
+      )}
     </View>
   );
 }
@@ -78,5 +86,25 @@ const styles = StyleSheet.create({
   moduleDescription: {
     fontSize: 14,
     color: '#444',
+  },
+  loadingText: {
+    textAlign: 'center',
+    color: '#666',
+    marginTop: 50,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    padding: 20,
+    marginTop: 50,
+  },
+  errorText: {
+    color: '#ff4444',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  retryText: {
+    color: '#007AFF',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });

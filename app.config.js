@@ -22,7 +22,11 @@ export default {
     web: {
       bundler: "metro",
       output: "static",
-      favicon: "./src/assets/images/favicon.png"
+      favicon: "./src/assets/images/favicon.png",
+      meta: {
+        "disable-remote-playback": "true",
+        "google-cast-sdk-enabled": "false"
+      }
     },
     plugins: [
       "expo-router",
