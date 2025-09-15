@@ -86,7 +86,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
                 <AICourseChat
                 title={slide.slide_title}
                   isActive={isActive}
-                  question={'Чому небо блакитне ?'} //
+                  slideId={slide.id} 
                   currentIndex={currentIndex}
                   totalSlides={totalSlides}
                 />

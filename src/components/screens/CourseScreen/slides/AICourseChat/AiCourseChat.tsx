@@ -1,8 +1,10 @@
 import { Icon } from '@/src/components/ui/icon';
+import { useQuestionsStore } from '@/src/services/slidePrompt';
 import { MessageCircle, Send } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { askGemini } from './askGemini';
+
 
 interface Message {
   id: string;
@@ -12,20 +14,33 @@ interface Message {
 
 interface AICourseChatProps {
   title: string;
-  question: string;
   isActive?: boolean;
   currentIndex?: number;
   totalSlides?: number;
+  slideId: string
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const AICourseChat: React.FC<AICourseChatProps> = ({ title, question , isActive, currentIndex, totalSlides}) => {
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 'q1', role: 'ai', text: question },
-  ]);
+const AICourseChat: React.FC<AICourseChatProps> = ({ title , isActive, currentIndex, totalSlides, slideId}) => {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { questions, fetchQuestionBySlide, isLoading, error } = useQuestionsStore();
+
+useEffect(() => {
+  if (slideId) {
+    fetchQuestionBySlide(slideId);
+  }
+    const question = questions[slideId]?.prompt;
+    if (question) {
+      setMessages([{ id: 'q1', role: 'ai', text: question }]);
+    }
+
+  
+}, [slideId]);
+
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -51,6 +66,11 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, question , isActive,
       setLoading(false);
     }
   };
+
+  console.log('slideId',slideId)
+  console.log('questions', questions)
+  console.log('messages', messages)
+  
 
   return (
     <View style={styles.screen}>
@@ -86,6 +106,18 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, question , isActive,
       </View>
 
       {/* Footer з інпутом */}
+      {/* <View style={styles.footer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Введіть відповідь..."
+          value={input}
+          onChangeText={setInput}
+          multiline
+        />
+        <TouchableOpacity onPress={handleSend} disabled={loading}>
+          <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
+        </TouchableOpacity>
+      </View> */}
       <View style={styles.footer}>
         <TextInput
           style={styles.input}
@@ -111,11 +143,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
     padding: 16,
   },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  inactiveText: { color: '#64748b', fontSize: 16 },
-  header: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: '#0f172a', flexShrink: 1 },
-  headerCounter: { fontSize: 14, color: '#475569', alignSelf: 'center' },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0f172a',
+    flexShrink: 1,
+  },
+  headerCounter: {
+    fontSize: 14,
+    color: '#475569',
+    alignSelf: 'center',
+  },
   chatBox: {
     flex: 1,
     borderRadius: 16,
@@ -149,7 +192,23 @@ const styles = StyleSheet.create({
   },
   messageIcon: { marginRight: 6 },
   messageText: { fontSize: 16, color: '#0f172a', lineHeight: 22 },
-  footer: { marginTop: 8, alignItems: 'center' },
-  footerText: { fontSize: 12, color: '#94a3b8' },
-  input: {}
+  footer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingTop: 8,
+  },
+  input: {
+    flex: 1,
+    minHeight: 40,
+    maxHeight: 100,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontSize: 16,
+    backgroundColor: '#fff',
+    marginRight: 8,
+  },
 });
