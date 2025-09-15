@@ -2,7 +2,7 @@ import { Slide } from '@/src/constants/types/slides';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
-import AICourseChatPlaceholder from './slides/AiCourseChat';
+import AICourseChat from './slides/AICourseChat/AiCourseChat';
 import ContentWithExample from './slides/ContentWithExample';
 import CourseContentsScreen from './slides/CourseContentsScreen';
 import CourseIntroScreen from './slides/CourseIntroScreen';
@@ -83,9 +83,10 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
         case 'ai':
             return (
               <View key={key} style={{ width, height }}>
-                <AICourseChatPlaceholder
+                <AICourseChat
                 title={slide.slide_title}
                   isActive={isActive}
+                  question={'Чому небо блакитне ?'} //
                   currentIndex={currentIndex}
                   totalSlides={totalSlides}
                 />
