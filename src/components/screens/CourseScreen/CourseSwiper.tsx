@@ -1,5 +1,6 @@
 import { Slide } from '@/src/constants/types/slides';
-import React, { useEffect, useRef, useState } from 'react';
+import { useSlidesStore } from '@/src/stores';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
 import AICourseChatPlaceholder from './slides/AiCourseChat';
@@ -12,21 +13,41 @@ import TextSlide from './slides/TextSlide';
 import VideoPlayer from './VideoPlayer';
 
 interface CourseSwiperProps {
-  slides: Slide[];
+  // Props are now optional since we get data from store
+  slides?: Slide[];
   initialIndex?: number;
   onIndexChange?: (index: number) => void;
-  totalSlides:number
+  totalSlides?: number;
 }
 
-const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex = 0, onIndexChange ,totalSlides}) => {
+const CourseSwiper: React.FC<CourseSwiperProps> = ({ 
+  slides: propSlides, 
+  initialIndex = 0, 
+  onIndexChange, 
+  totalSlides: propTotalSlides 
+}) => {
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<Animated.ScrollView | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(Math.max(0, initialIndex));
+  
+  // Get data from store
+  const { 
+    slides: storeSlides, 
+    currentSlideIndex, 
+    setCurrentSlideIndex 
+  } = useSlidesStore();
+  
+  // Use store data if available, otherwise fall back to props
+  const slides = useMemo(() => 
+    storeSlides.length > 0 ? storeSlides : propSlides || [], 
+    [storeSlides, propSlides]
+  );
+  const totalSlides = propTotalSlides || slides.length;
+  const currentIndex = currentSlideIndex;
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: event => {
       const idx = Math.round(event.contentOffset.y / height);
-      runOnJS(setCurrentIndex)(idx);
+      runOnJS(setCurrentSlideIndex)(idx);
       if (onIndexChange) runOnJS(onIndexChange)(idx);
     },
   });
@@ -35,12 +56,12 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({ slides = [], initialIndex =
     if (slides.length === 0) return;
   
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
-    setCurrentIndex(safeIndex);
+    setCurrentSlideIndex(safeIndex);
   
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
     });
-  }, [slides, height, initialIndex]);
+  }, [slides, height, initialIndex, setCurrentSlideIndex]);
   
   
 

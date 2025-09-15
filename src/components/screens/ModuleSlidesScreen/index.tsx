@@ -55,13 +55,7 @@ export default function ModuleSlidesScreen() {
     );
   }
 
-  return (
-    <CourseSwiper
-      slides={slides}
-      initialIndex={0}
-      totalSlides={slides.length}
-    />
-  );
+  return <CourseSwiper />;
 }
 
 const styles = StyleSheet.create({

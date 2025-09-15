@@ -9,7 +9,6 @@ interface SlidesState {
   currentModuleId: string | null;
   isLoading: boolean;
   error: string | null;
-  lastFetchTime: number | null;
   
   // Actions
   fetchSlidesByModule: (moduleId: string) => Promise<void>;
@@ -26,8 +25,6 @@ interface SlidesState {
   setCurrentModuleId: (moduleId: string | null) => void;
 }
 
-// Cache duration in milliseconds (10 minutes for slides)
-const CACHE_DURATION = 10 * 60 * 1000;
 
 export const useSlidesStore = create<SlidesState>()(
   (set, get) => ({
@@ -37,24 +34,9 @@ export const useSlidesStore = create<SlidesState>()(
     currentModuleId: null,
     isLoading: false,
     error: null,
-    lastFetchTime: null,
 
     // Actions
     fetchSlidesByModule: async (moduleId: string) => {
-      const { lastFetchTime, currentModuleId } = get();
-      const now = Date.now();
-      
-      // Check if we have cached data for this module that's still valid
-      if (
-        currentModuleId === moduleId && 
-        lastFetchTime && 
-        (now - lastFetchTime) < CACHE_DURATION && 
-        get().slides.length > 0
-      ) {
-        console.log('📚 SlidesStore: Using cached slides for module', moduleId);
-        return;
-      }
-
       set({ isLoading: true, error: null, currentModuleId: moduleId });
       
       try {
@@ -70,7 +52,6 @@ export const useSlidesStore = create<SlidesState>()(
           slides: data || [], 
           currentSlideIndex: 0,
           isLoading: false, 
-          lastFetchTime: now,
           error: null 
         });
         
@@ -112,8 +93,7 @@ export const useSlidesStore = create<SlidesState>()(
     clearSlides: () => set({ 
       slides: [], 
       currentSlideIndex: 0, 
-      currentModuleId: null, 
-      lastFetchTime: null 
+      currentModuleId: null
     }),
 
     // Internal actions

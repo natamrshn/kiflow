@@ -1,4 +1,4 @@
-import { useCourseStore } from '@/src/stores';
+import { useModulesStore } from '@/src/stores';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -8,11 +8,11 @@ export default function CourseScreen() {
   const router = useRouter();
   const { 
     modules, 
-    isModulesLoading, 
+    isLoading, 
     error, 
     fetchModulesByCourse, 
     clearError 
-  } = useCourseStore();
+  } = useModulesStore();
 
   useEffect(() => {
     if (!params.id) return;
@@ -43,7 +43,7 @@ export default function CourseScreen() {
             Спробувати знову
           </Text>
         </View>
-      ) : isModulesLoading ? (
+      ) : isLoading ? (
         <Text style={styles.loadingText}>Завантаження модулів...</Text>
       ) : modules.length === 0 ? (
         <Text style={styles.loadingText}>Модулі не знайдено</Text>

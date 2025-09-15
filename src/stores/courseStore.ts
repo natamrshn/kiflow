@@ -1,6 +1,5 @@
 import { supabase } from '@/src/config/supabaseClient';
 import { Course } from '@/src/constants/types/course';
-import { Module } from '@/src/constants/types/modules';
 import { getCurrentUser } from '@/src/utils/authUtils';
 import { create } from 'zustand';
 
@@ -8,25 +7,20 @@ interface CourseState {
   // State
   courses: Course[];
   currentCourse: Course | null;
-  modules: Module[];
   isLoading: boolean;
-  isModulesLoading: boolean;
   error: string | null;
   lastFetchTime: number | null;
   
   // Actions
   fetchCourses: () => Promise<void>;
   fetchCourseById: (id: string) => Promise<Course | null>;
-  fetchModulesByCourse: (courseId: string) => Promise<void>;
   setCurrentCourse: (course: Course | null) => void;
   clearError: () => void;
   refreshCourses: () => Promise<void>;
   
   // Internal actions
   setCourses: (courses: Course[]) => void;
-  setModules: (modules: Module[]) => void;
   setLoading: (loading: boolean) => void;
-  setModulesLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
@@ -66,9 +60,7 @@ export const useCourseStore = create<CourseState>()(
     // Initial state
     courses: [],
     currentCourse: null,
-    modules: [],
     isLoading: false,
-    isModulesLoading: false,
     error: null,
     lastFetchTime: null,
 
@@ -191,34 +183,6 @@ export const useCourseStore = create<CourseState>()(
       }
     },
 
-    fetchModulesByCourse: async (courseId: string) => {
-      set({ isModulesLoading: true, error: null });
-      
-      try {
-        const { data, error } = await supabase
-          .from('modules')   
-          .select('*')
-          .eq('course_id', courseId)
-          .order('module_order', { ascending: true });
-
-        if (error) throw error;
-        
-        set({ 
-          modules: data || [], 
-          isModulesLoading: false, 
-          error: null 
-        });
-        
-        console.log(`📚 CourseStore: Loaded ${data?.length || 0} modules for course ${courseId}`);
-      } catch (error: any) {
-        console.error('❌ CourseStore: Error fetching modules:', error);
-        set({ 
-          error: error.message || 'Failed to fetch modules', 
-          isModulesLoading: false 
-        });
-        throw error;
-      }
-    },
 
     setCurrentCourse: (course: Course | null) => {
       set({ currentCourse: course });
@@ -234,9 +198,7 @@ export const useCourseStore = create<CourseState>()(
 
     // Internal actions
     setCourses: (courses: Course[]) => set({ courses }),
-    setModules: (modules: Module[]) => set({ modules }),
     setLoading: (loading: boolean) => set({ isLoading: loading }),
-    setModulesLoading: (loading: boolean) => set({ isModulesLoading: loading }),
     setError: (error: string | null) => set({ error }),
   })
 );
