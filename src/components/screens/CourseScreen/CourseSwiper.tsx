@@ -1,16 +1,17 @@
-import { Slide } from '@/src/constants/types/slides';
-import { useSlidesStore } from '@/src/stores';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
-import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
-import AICourseChatPlaceholder from './slides/AiCourseChat';
-import ContentWithExample from './slides/ContentWithExample';
-import CourseContentsScreen from './slides/CourseContentsScreen';
-import CourseIntroScreen from './slides/CourseIntroScreen';
-import MediaPlaceholder from './slides/MediaPlaceholder';
-import QuizSlide from './slides/QuizeSlide';
-import TextSlide from './slides/TextSlide';
-import VideoPlayer from './VideoPlayer';
+import { Slide } from "@/src/constants/types/slides";
+import { useSlidesStore } from "@/src/stores";
+import React, { useEffect, useMemo, useRef } from "react";
+import { StyleSheet, View, useWindowDimensions } from "react-native";
+import Animated, {
+  runOnJS,
+  useAnimatedScrollHandler,
+} from "react-native-reanimated";
+import AICourseChatPlaceholder from "./slides/AiCourseChat";
+import ContentWithExample from "./slides/ContentWithExample";
+import MediaPlaceholder from "./slides/MediaPlaceholder";
+import QuizSlide from "./slides/QuizeSlide";
+import TextSlide from "./slides/TextSlide";
+import VideoPlayer from "./VideoPlayer";
 
 interface CourseSwiperProps {
   // Props are now optional since we get data from store
@@ -20,32 +21,32 @@ interface CourseSwiperProps {
   totalSlides?: number;
 }
 
-const CourseSwiper: React.FC<CourseSwiperProps> = ({ 
-  slides: propSlides, 
-  initialIndex = 0, 
-  onIndexChange, 
-  totalSlides: propTotalSlides 
+const CourseSwiper: React.FC<CourseSwiperProps> = ({
+  slides: propSlides,
+  initialIndex = 0,
+  onIndexChange,
+  totalSlides: propTotalSlides,
 }) => {
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<Animated.ScrollView | null>(null);
-  
+
   // Get data from store
-  const { 
-    slides: storeSlides, 
-    currentSlideIndex, 
-    setCurrentSlideIndex 
+  const {
+    slides: storeSlides,
+    currentSlideIndex,
+    setCurrentSlideIndex,
   } = useSlidesStore();
-  
+
   // Use store data if available, otherwise fall back to props
-  const slides = useMemo(() => 
-    storeSlides.length > 0 ? storeSlides : propSlides || [], 
+  const slides = useMemo(
+    () => (storeSlides.length > 0 ? storeSlides : propSlides || []),
     [storeSlides, propSlides]
   );
   const totalSlides = propTotalSlides || slides.length;
   const currentIndex = currentSlideIndex;
 
   const onScroll = useAnimatedScrollHandler({
-    onScroll: event => {
+    onScroll: (event) => {
       const idx = Math.round(event.contentOffset.y / height);
       runOnJS(setCurrentSlideIndex)(idx);
       if (onIndexChange) runOnJS(onIndexChange)(idx);
@@ -54,83 +55,67 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
 
   useEffect(() => {
     if (slides.length === 0) return;
-  
+
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
     setCurrentSlideIndex(safeIndex);
-  
+
     requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
     });
   }, [slides, height, initialIndex, setCurrentSlideIndex]);
-  
-  
 
   const renderSlide = (slide: Slide, index: number) => {
-    const isActive = index === currentIndex; 
+    const isActive = index === currentIndex;
     const key = `${slide.id}-${index}`;
     switch (slide.slide_type) {
-      case 'text':
+      case "text":
         return (
           <View key={key} style={{ width, height }}>
-            <TextSlide title={slide.slide_title} data={slide.slide_data ?? ''}/>
-          </View>
-        );
-
-        case 'video': {
-            const { uri, mux } = slide.slide_data.video || {};
-            const hasVideo = !!uri || !!mux;
-            return (
-              <View key={key} className='flex-1 bg-white dark:bg-neutral-900'>
-                {hasVideo ? (
-                  <VideoPlayer uri={uri ?? undefined} mux={mux ?? undefined} isActive={isActive} />
-                ) : (
-                  <MediaPlaceholder />
-                )}
-              </View>
-            );
-          }
-      
-
-      case 'quiz':
-        return (
-          <View key={key} style={{ width, height }}>
-            <QuizSlide
+            <TextSlide
               title={slide.slide_title}
-              quiz={slide.slide_data}
+              data={slide.slide_data ?? ""}
             />
           </View>
         );
 
-        case 'ai':
-            return (
-              <View key={key} style={{ width, height }}>
-                <AICourseChatPlaceholder
-                title={slide.slide_title}
-                  isActive={isActive}
-                  currentIndex={currentIndex}
-                  totalSlides={totalSlides}
-                />
-              </View>
-            );
-            case 'first_slide':
-                
-                return (
-                  <View key={key} style={{ width, height }}>
-                    <CourseIntroScreen title={slide.slide_title} data={slide.slide_data ?? ''}/>
-                  </View>
-                );
+      case "video": {
+        const { uri, mux } = slide.slide_data.video || {};
+        const hasVideo = !!uri || !!mux;
+        return (
+          <View key={key} className="flex-1 bg-white dark:bg-neutral-900">
+            {hasVideo ? (
+              <VideoPlayer
+                uri={uri ?? undefined}
+                mux={mux ?? undefined}
+                isActive={isActive}
+              />
+            ) : (
+              <MediaPlaceholder />
+            )}
+          </View>
+        );
+      }
 
-                case 'second_slide':
-                    return (
-                      <View key={key} style={{ width, height }}>
-                        <CourseContentsScreen title={slide.slide_title} data={slide.slide_data} />
-                      </View>
-                    );
-                  
-      
-      
+      case "quiz":
+        return (
+          <View key={key} style={{ width, height }}>
+            <QuizSlide title={slide.slide_title} quiz={slide.slide_data} />
+          </View>
+        );
 
-      case 'content':
+      case "ai":
+        return (
+          <View key={key} style={{ width, height }}>
+            <AICourseChatPlaceholder
+              title={slide.slide_title}
+              isActive={isActive}
+              currentIndex={currentIndex}
+              totalSlides={totalSlides}
+            />
+          </View>
+        );
+
+      case "content":
         return (
           <View key={key} style={{ width, height }}>
             <ContentWithExample
@@ -144,8 +129,18 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
 
       default:
         return (
-          <View key={slide.id} style={{ width, height, justifyContent: 'center', alignItems: 'center' }}>
-            <MediaPlaceholder message={`Слайд типу "${slide.slide_type}" ще не підтримується`}  />
+          <View
+            key={slide.id}
+            style={{
+              width,
+              height,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <MediaPlaceholder
+              message={`Слайд типу "${slide.slide_type}" ще не підтримується`}
+            />
           </View>
         );
     }
@@ -154,7 +149,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
   return (
     <View style={styles.wrapper}>
       <Animated.ScrollView
-       key={slides.length} 
+        key={slides.length}
         ref={scrollRef}
         pagingEnabled
         onScroll={onScroll}
@@ -164,7 +159,9 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
         {slides.map((s, i) => renderSlide(s, i))}
       </Animated.ScrollView>
 
-      <View style={[styles.pagination, { top: height * 0.2, height: height * 0.6 }]}>
+      <View
+        style={[styles.pagination, { top: height * 0.2, height: height * 0.6 }]}
+      >
         {slides.map((_, i) => {
           const active = i === currentIndex;
           return (
@@ -186,12 +183,12 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
 export default CourseSwiper;
 
 const styles = StyleSheet.create({
-  wrapper: { flex: 1, backgroundColor: '#fff' },
+  wrapper: { flex: 1, backgroundColor: "#fff" },
   pagination: {
-    position: 'absolute',
+    position: "absolute",
     right: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   dot: {
     width: 10,
@@ -199,6 +196,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 6,
   },
-  dotActive: { backgroundColor: '#4CAF50' },
-  dotInactive: { backgroundColor: '#CFCFCF' },
+  dotActive: { backgroundColor: "#4CAF50" },
+  dotInactive: { backgroundColor: "#CFCFCF" },
 });
