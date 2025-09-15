@@ -1,4 +1,4 @@
-import { getUserRole } from "@/src/services/auth";
+import { useAuthStore } from "@/src/stores/authStore";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
@@ -8,6 +8,9 @@ import CustomHeader from "../../ui/CustomHeader";
 export default function HomeScreen() {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
+  
+  // Zustand store
+  const { getUserRole } = useAuthStore();
 
   useEffect(() => {
     const fetchRole = async () => {
@@ -16,8 +19,7 @@ export default function HomeScreen() {
     };
 
     fetchRole();
-  }, []);
-
+  }, [getUserRole]);
   return (
     <View style={styles.container}>
       <CustomHeader />

@@ -1,12 +1,21 @@
 import 'react-native-reanimated'; // ⚡️ цей імпорт має бути найпершим
 
+import { useAuthStore } from '@/src/stores/authStore';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+
+  const checkSession = useAuthStore(state => state.checkSession);
+
+  useEffect(() => {
+    // Initialize auth state when app starts
+    checkSession();
+  }, [checkSession]);
 
   if (!loaded) {
     // Async font loading only occurs in development.

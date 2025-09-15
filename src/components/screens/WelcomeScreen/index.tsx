@@ -1,6 +1,5 @@
 // import { useIsGuestUser } from '@/src/hooks/auth/useIsGuestUser';
 import { useRouter } from 'expo-router';
-import React from 'react';
 import { Image, Text as RNText, StyleSheet, View } from 'react-native';
 import Button from '../../ui/button';
 
@@ -16,11 +15,23 @@ export default function WelcomeScreen() {
   // },[isGuest])
 
   const handleSignIn = () => {
-    router.push('/auth/login');
+    console.log('🔵 WelcomeScreen: handleSignIn called');
+    try {
+      router.push('/auth/login');
+      console.log('✅ WelcomeScreen: router.push(/auth/login) executed');
+    } catch (error) {
+      console.error('❌ WelcomeScreen: Error navigating to login:', error);
+    }
   };
 
   const handleSignUp = () => {
-    router.push('/auth/registration');
+    console.log('🔵 WelcomeScreen: handleSignUp called');
+    try {
+      router.push('/auth/registration');
+      console.log('✅ WelcomeScreen: router.push(/auth/registration) executed');
+    } catch (error) {
+      console.error('❌ WelcomeScreen: Error navigating to registration:', error);
+    }
   };
 
 
