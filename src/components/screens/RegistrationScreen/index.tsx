@@ -1,16 +1,16 @@
-import { signUp } from '@/src/services/auth';
+import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Button from '../../ui/button';
 import { Input, InputField } from '../../ui/input';
@@ -28,8 +28,10 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState<{ name?: string; email?: string; password?: string; confirmPassword?: string }>({});
   const [touched, setTouched] = useState<{ name?: boolean; email?: boolean; password?: boolean; confirmPassword?: boolean }>({});
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
+  // Zustand store
+  const { signUp, isLoading, error, clearError } = useAuthStore();
 
   const windowWidth = Dimensions.get('window').width;
 
@@ -67,22 +69,24 @@ export default function RegisterScreen() {
     validate(); 
   };
 
+  // Clear error when component mounts or when user starts typing
+  useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [name, email, password, confirmPassword, error, clearError]);
+
   const handleRegister = async () => {
     setTouched({ name: true, email: true, password: true, confirmPassword: true });
     if (!validate()) return;
 
-    setLoading(true);
     try {
-      const { error } = await signUp(email, password, { name }); // 👈 передаємо ім'я
-      if (error) throw error;
-
+      await signUp(email, password, name);
       Alert.alert('Success', 'Account created successfully');
       router.replace('/course-code');
     } catch (err: unknown) {
-      const error = err as AuthError;
-      Alert.alert('Registration Failed', error.message || 'Something went wrong');
-    } finally {
-      setLoading(false);
+      const authError = err as AuthError;
+      Alert.alert('Registration Failed', authError.message || 'Something went wrong');
     }
   };
 
@@ -187,11 +191,11 @@ export default function RegisterScreen() {
 
             {/* Button */}
             <Button 
-              title={loading ? 'Signing up...' : 'Sign Up'} 
+              title={isLoading ? 'Signing up...' : 'Sign Up'} 
               variant="primary" 
               size="lg"
               onPress={handleRegister} 
-              disabled={loading}
+              disabled={isLoading}
               style={styles.button}
             />
 

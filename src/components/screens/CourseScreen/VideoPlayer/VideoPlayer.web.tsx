@@ -17,6 +17,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
   const [needsUserInteraction, setNeedsUserInteraction] = useState(false);
   const { ref: viewRef, inView } = useInView<HTMLDivElement>({ threshold: 0.35 });
 
+  // Disable Cast SDK globally when component mounts
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as any).cast = undefined;
+      (window as any).chrome = (window as any).chrome || {};
+      (window as any).chrome.cast = undefined;
+    }
+  }, []);
+
   // Set playback rate for mux player
   useEffect(() => {
     if (mux && muxPlayerRef.current) {
@@ -107,6 +116,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           autoPlay={inView}
           muted
+          cast={false}
+          disableRemotePlayback={true}
+          noCast={true}
+          castDisabled={true}
         />
       ) : null}
     </Box>

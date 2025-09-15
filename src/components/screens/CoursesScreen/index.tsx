@@ -1,37 +1,27 @@
 import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { Text } from '@/src/components/ui/text';
-import type { Course } from '@/src/constants/types/course';
-import { getCourses } from '@/src/services/courses';
+import { useCourseStore } from '@/src/stores';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import CourseCard from './components/CourseCard';
 
 
 const CoursesScreen = () => {
   const router = useRouter();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-
+  const { 
+    courses, 
+    isLoading, 
+    error, 
+    fetchCourses, 
+    clearError 
+  } = useCourseStore();
 
   useEffect(() => {
-    setLoading(true);
-  
-    getCourses()
-      .then(({ data, error }) => {
-        if (error) {
-          console.error('Помилка при завантаженні курсів:', error);
-        } else {
-          setCourses(data || []);
-        }
-      })
-      .catch(err => {
-        console.error('Непередбачена помилка при завантаженні курсів:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+    fetchCourses().catch(err => {
+      console.error('Непередбачена помилка при завантаженні курсів:', err);
+    });
+  }, [fetchCourses]);
   
   const defaultAvatarUrl =
     'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg';
@@ -39,8 +29,20 @@ const CoursesScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.listContainer}>
-        {courses.length === 0 ? (
+        {error ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>Помилка: {error}</Text>
+            <Text style={styles.retryText} onPress={() => {
+              clearError();
+              fetchCourses();
+            }}>
+              Спробувати знову
+            </Text>
+          </View>
+        ) : isLoading ? (
           <Text style={styles.loadingText}>Завантаження курсів...</Text>
+        ) : courses.length === 0 ? (
+          <Text style={styles.loadingText}>Курси не знайдено</Text>
         ) : (
           <View style={styles.cardsContainer}>
             {courses.map(course => (
@@ -72,4 +74,18 @@ const styles = StyleSheet.create({
   listContainer: { padding: 16 },
   cardsContainer: { gap: 16 },
   loadingText: { textAlign: 'center', color: '#666' },
+  errorContainer: {
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#ff4444',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  retryText: {
+    color: '#007AFF',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+  },
 });

@@ -1,8 +1,6 @@
 // src/components/CustomHeader.tsx
-import { useIsGuestUser } from "@/src/hooks/auth/useIsGuestUser";
-import { signOut } from "@/src/services/auth";
+import { useAuthStore } from "@/src/stores/authStore";
 import { Href, useRouter } from "expo-router";
-import React from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppRoute } from "../screens/HomePageScreen/NavigationButton";
@@ -13,19 +11,15 @@ export default function CustomHeader() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const isGuestValue = useIsGuestUser();
-  const isGuest = isGuestValue === null ? true : isGuestValue;
+  // Zustand store
+  const { isGuest, signOut } = useAuthStore();
 
   const defaultAvatarUrl =
     "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg";
 
   const handleLogout = async () => {
     try {
-      const { error } = await signOut();
-      if (error) {
-        console.error("Logout error:", error);
-        return;
-      }
+      await signOut();
       console.log("Successfully logged out");
     } catch (error) {
       console.error("Unexpected logout error:", error);

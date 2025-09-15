@@ -1,4 +1,5 @@
 import type { Course } from '@/src/constants/types/course';
+import { getCurrentUser } from '@/src/utils/authUtils';
 import { supabase } from '../config/supabaseClient';
 
 const getPublicCourses = async (): Promise<{ data: Course[] | null; error: any }> => {
@@ -32,9 +33,9 @@ const getCompanyCourses = async (companyIds: string[]): Promise<Course[]> => {
 export const getCourses = async (): Promise<{ data: Course[] | null; error: any }> => {
   try {
     // Отримуємо поточного користувача
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     
-    if (userError || !user) {
+    if (!user) {
       return await getPublicCourses();
     }
 

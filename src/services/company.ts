@@ -1,3 +1,4 @@
+import { getCurrentUser } from '@/src/utils/authUtils';
 import { supabase } from '../config/supabaseClient';
 
 export interface Company {
@@ -120,9 +121,9 @@ export const getUserCompanies = async (userId: string): Promise<{ data: Company[
 export const joinCompanyByCode = async (code: string): Promise<{ success: boolean; error?: any; company?: Company; alreadyMember?: boolean }> => {
   try {
     // Отримуємо поточного користувача
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     
-    if (userError || !user) {
+    if (!user) {
       return { success: false, error: 'User not authenticated' };
     }
 

@@ -1,39 +1,45 @@
 
-import { Slide } from '@/src/constants/types/slides';
-import { getSlidesByModule } from '@/src/services/slides';
+import { useSlidesStore } from '@/src/stores';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import CourseSwiper from '../CourseScreen/CourseSwiper';
 
 export default function ModuleSlidesScreen() {
   const params = useLocalSearchParams<{ id?: string }>(); // id модуля
-  const [slides, setSlides] = useState<Slide[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { 
+    slides, 
+    isLoading, 
+    error, 
+    fetchSlidesByModule, 
+    clearError 
+  } = useSlidesStore();
 
   useEffect(() => {
     if (!params.id) return;
 
-    const fetchSlides = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await getSlidesByModule(params.id!);
-        if (error) {
-          console.error(error);
-          return;
-        }
-        if (data) setSlides(data);
-      } catch (err) {
-        console.error('Unexpected error fetching slides:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchSlidesByModule(params.id).catch(err => {
+      console.error('Unexpected error fetching slides:', err);
+    });
+  }, [params.id, fetchSlidesByModule]);
 
-    fetchSlides();
-  }, [params.id]);
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Помилка: {error}</Text>
+        <Text style={styles.retryText} onPress={() => {
+          clearError();
+          if (params.id) {
+            fetchSlidesByModule(params.id);
+          }
+        }}>
+          Спробувати знову
+        </Text>
+      </View>
+    );
+  }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" />
@@ -41,15 +47,40 @@ export default function ModuleSlidesScreen() {
     );
   }
 
-  return (
-    <CourseSwiper
-      slides={slides}
-      initialIndex={0}
-      totalSlides={slides.length}
-    />
-  );
+  if (slides.length === 0) {
+    return (
+      <View style={styles.loader}>
+        <Text style={styles.noSlidesText}>Слайди не знайдено</Text>
+      </View>
+    );
+  }
+
+  return <CourseSwiper />;
 }
 
 const styles = StyleSheet.create({
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#ff4444',
+    textAlign: 'center',
+    marginBottom: 10,
+    fontSize: 16,
+  },
+  retryText: {
+    color: '#007AFF',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+    fontSize: 16,
+  },
+  noSlidesText: {
+    color: '#666',
+    textAlign: 'center',
+    fontSize: 16,
+  },
 });

@@ -1,17 +1,17 @@
 // src/screens/Auth/LoginScreen.tsx
-import { signIn } from '@/src/services/auth';
+import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Alert,
-  Dimensions,
-  Image,
-  KeyboardAvoidingView,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    Dimensions,
+    Image,
+    KeyboardAvoidingView,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import Button from '../../ui/button';
 import { Input, InputField } from '../../ui/input';
@@ -27,8 +27,10 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [touched, setTouched] = useState<{ email?: boolean; password?: boolean }>({});
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  
+  // Zustand store
+  const { signIn, isLoading, error, clearError } = useAuthStore();
 
   const windowWidth = Dimensions.get('window').width;
 
@@ -56,21 +58,23 @@ export default function LoginScreen() {
     validate();
   };
 
+  // Clear error when component mounts or when user starts typing
+  useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [email, password, error, clearError]);
+
   const handleLogin = async () => {
     setTouched({ email: true, password: true });
     if (!validate()) return;
 
-    setLoading(true);
     try {
-      const { error } = await signIn(email, password);
-      if (error) throw error;
-
+      await signIn(email, password);
       router.replace('/home');
     } catch (err: unknown) {
-      const error = err as AuthError;
-      Alert.alert('Login Failed', error.message || 'Login failed');
-    } finally {
-      setLoading(false);
+      const authError = err as AuthError;
+      Alert.alert('Login Failed', authError.message || 'Login failed');
     }
   };
 
@@ -135,11 +139,11 @@ export default function LoginScreen() {
 
             {/* Button */}
             <Button 
-              title={loading ? 'Signing in...' : 'Sign In'} 
+              title={isLoading ? 'Signing in...' : 'Sign In'} 
               variant="primary" 
               size="lg"
               onPress={handleLogin} 
-              disabled={loading}
+              disabled={isLoading}
               style={styles.button}
             />
 
