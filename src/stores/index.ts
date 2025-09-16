@@ -5,4 +5,4 @@ export { useModulesStore } from './modulesStore';
 export { useSlidesStore } from './slidesStore';
 
 // Future stores will be exported here:
-// export { useUserProgressStore } from './userProgressStore';
+export { useUserProgressStore } from './userProgressStore';

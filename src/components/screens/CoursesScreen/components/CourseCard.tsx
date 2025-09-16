@@ -1,10 +1,13 @@
 import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
+import { supabase } from '@/src/config/supabaseClient';
 import type { Course } from '@/src/constants/types/course';
+import { useUserProgressStore } from '@/src/stores';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../../../ui/button';
+import ProgressBar from '../../../ui/progress-bar';
 
 interface CourseCardProps {
   course: Course;
@@ -12,6 +15,30 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const router = useRouter();
+  const { getCourseProgress } = useUserProgressStore();
+  const [courseProgress, setCourseProgress] = useState(0);
+
+  // Получаем модули курса для расчёта прогресса
+  useEffect(() => {
+    const fetchModulesAndCalculateProgress = async () => {
+      try {
+        const { data: modules } = await supabase
+          .from('modules')
+          .select('id')
+          .eq('course_id', course.id);
+        
+        if (modules) {
+          const moduleIds = modules.map(module => module.id);
+          const progress = getCourseProgress(moduleIds);
+          setCourseProgress(progress);
+        }
+      } catch (error) {
+        console.error('Error fetching modules for progress:', error);
+      }
+    };
+
+    fetchModulesAndCalculateProgress();
+  }, [course.id, getCourseProgress]);
 
   return (
     <View style={styles.card}>
@@ -24,9 +51,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <Text style={styles.description} numberOfLines={2}>
           {course.description || 'Опис відсутній'}
         </Text>
+        
+        {/* Показываем прогресс только если он больше 0 */}
+        {courseProgress > 0 && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressRow}>
+              <Text style={styles.progressLabel}>Прогресс:</Text>
+              <Text style={styles.progressText}>{courseProgress}%</Text>
+            </View>
+            <ProgressBar percent={courseProgress} height={6} />
+          </View>
+        )}
+        
         <HStack style={styles.button_block}>
           <Button
-            title="ПОЧАТИ КУРС"
+            title={courseProgress > 0 ? "ПРОДОВЖИТИ" : "ПОЧАТИ КУРС"}
             variant="primary"
             size="md"
             onPress={() => router.push(`/courses/${course.id}`)}
@@ -60,6 +99,26 @@ const styles = StyleSheet.create({
   statsRow: { display:'flex' ,flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 },
   stat: {display:'flex', flexDirection: 'row', alignItems: 'center', gap: 4 },
   statText: { fontSize: 12, color: '#555' },
+  progressContainer: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  progressRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  progressLabel: {
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '500',
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#4CAF50',
+    fontWeight: '600',
+  },
   button: {
     marginTop: 16,
     width: '50%',
