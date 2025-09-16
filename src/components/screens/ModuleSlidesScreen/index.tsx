@@ -1,7 +1,7 @@
 
-import { useSlidesStore } from '@/src/stores';
+import { useSlidesStore, useUserProgressStore } from '@/src/stores';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import CourseSwiper from '../CourseScreen/CourseSwiper';
 
@@ -14,6 +14,9 @@ export default function ModuleSlidesScreen() {
     fetchSlidesByModule, 
     clearError 
   } = useSlidesStore();
+  const { setModuleProgress } = useUserProgressStore();
+
+  const totalSlides = useMemo(() => slides.length || 0, [slides]);
 
   useEffect(() => {
     if (!params.id) return;
@@ -55,7 +58,14 @@ export default function ModuleSlidesScreen() {
     );
   }
 
-  return <CourseSwiper />;
+  // Обновляем прогресс при смене индекса в CourseSwiper через callback
+  const handleIndexChange = (index: number) => {
+    if (!params.id || totalSlides === 0) return;
+    const percent = Math.round(((index + 1) / totalSlides) * 100);
+    setModuleProgress(params.id, percent).catch(() => {});
+  };
+
+  return <CourseSwiper onIndexChange={handleIndexChange} />;
 }
 
 const styles = StyleSheet.create({

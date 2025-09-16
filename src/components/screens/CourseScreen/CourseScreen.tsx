@@ -1,4 +1,5 @@
-import { useModulesStore } from '@/src/stores';
+import ProgressBar from '@/src/components/ui/progress-bar';
+import { useModulesStore, useUserProgressStore } from '@/src/stores';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -13,6 +14,7 @@ export default function CourseScreen() {
     fetchModulesByCourse, 
     clearError 
   } = useModulesStore();
+  const { getModuleProgress } = useUserProgressStore();
 
   useEffect(() => {
     if (!params.id) return;
@@ -57,6 +59,12 @@ export default function CourseScreen() {
               {item.description ? (
                 <Text style={styles.moduleDescription}>{item.description}</Text>
               ) : null}
+              <View style={styles.progressRow}>
+                <View style={styles.progressBarWrapper}>
+                  <ProgressBar percent={getModuleProgress(item.id)} />
+                </View>
+                <Text style={styles.progressText}>{getModuleProgress(item.id)}%</Text>
+              </View>
             </Pressable>
           )}
         />
@@ -86,6 +94,17 @@ const styles = StyleSheet.create({
   moduleDescription: {
     fontSize: 14,
     color: '#444',
+  },
+  progressRow: {
+    marginTop: 12,
+  },
+  progressBarWrapper: {
+    marginBottom: 6,
+  },
+  progressText: {
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'right',
   },
   loadingText: {
     textAlign: 'center',
