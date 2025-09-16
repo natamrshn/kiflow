@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   },
   fill: {
     height: '100%',
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#026b1e',
   },
 });
 

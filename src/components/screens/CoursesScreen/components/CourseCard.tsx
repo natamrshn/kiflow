@@ -2,7 +2,7 @@ import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
 import { supabase } from '@/src/config/supabaseClient';
 import type { Course } from '@/src/constants/types/course';
-import { useUserProgressStore } from '@/src/stores';
+import { useAuthStore, useUserProgressStore } from '@/src/stores';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -15,7 +15,8 @@ interface CourseCardProps {
 
 const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const router = useRouter();
-  const { getCourseProgress } = useUserProgressStore();
+  const { getCourseProgress, progressByModule } = useUserProgressStore();
+  const { user } = useAuthStore();
   const [courseProgress, setCourseProgress] = useState(0);
 
   // Получаем модули курса для расчёта прогресса
@@ -38,7 +39,32 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     };
 
     fetchModulesAndCalculateProgress();
-  }, [course.id, getCourseProgress]);
+  }, [course.id, getCourseProgress, progressByModule]); // Добавили progressByModule в зависимости
+
+  // Отправляем прогресс курса в БД (debounce через таймер внутри эффекта)
+  useEffect(() => {
+    if (!user?.id) return;
+    if (courseProgress < 0 || courseProgress > 100) return;
+
+    const timeout = setTimeout(async () => {
+      try {
+        await supabase
+          .from('course_progress')
+          .upsert(
+            {
+              user_id: user.id,
+              course_id: course.id,
+              progress: courseProgress,
+            },
+            { onConflict: 'user_id,course_id' }
+          );
+      } catch (e) {
+        console.warn('Failed to upsert course progress', e);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [courseProgress, course.id, user?.id]);
 
   return (
     <View style={styles.card}>
@@ -56,7 +82,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         {courseProgress > 0 && (
           <View style={styles.progressContainer}>
             <View style={styles.progressRow}>
-              <Text style={styles.progressLabel}>Прогресс:</Text>
+              <Text style={styles.progressLabel}>Прогрес:</Text>
               <Text style={styles.progressText}>{courseProgress}%</Text>
             </View>
             <ProgressBar percent={courseProgress} height={6} />
@@ -116,7 +142,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: 12,
-    color: '#4CAF50',
+    color: '#026b1e',
     fontWeight: '600',
   },
   button: {
