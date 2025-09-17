@@ -10,7 +10,7 @@ import { Colors } from '../../../constants/Colors';
 
 const SCOPE = 'INPUT';
 
-// Используем цвета из константы Colors
+// Використовуємо кольори з константи Colors
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  // Размеры (улучшены для лучших touch-целей)
+  // Розміри (поліпшені для кращих touch-цілей)
   sizeXl: {
     height: 56,
     minHeight: 56,
@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     height: 44,
     minHeight: 44,
   },
-  // Варианты
+  // Варіанти
   variantUnderlined: {
     borderRadius: 0,
     borderBottomWidth: 1,
@@ -112,7 +112,7 @@ cssInterop(PrimitiveIcon, {
   },
 });
 
-// Типы для размеров и вариантов
+// Типи для розмірів і варіантів
 type InputSize = 'sm' | 'md' | 'lg' | 'xl';
 type InputVariant = 'outline' | 'underlined' | 'rounded';
 
@@ -128,7 +128,7 @@ const Input = React.forwardRef<React.ComponentRef<typeof UIInput>, IInputProps>(
   { className, variant = 'outline', size = 'md', style, hapticFeedback = true, ...props },
   ref
 ) {
-  // Обработчик для haptic feedback
+  // Обробник для haptic feedback
   const handleFocus = (event: any) => {
     if (hapticFeedback) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -138,7 +138,7 @@ const Input = React.forwardRef<React.ComponentRef<typeof UIInput>, IInputProps>(
     }
   };
 
-  // Комбинируем стили из StyleSheet
+  // Комбінуємо стилі з StyleSheet
   const containerStyle = [
     styles.inputContainer,
     styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}` as keyof typeof styles],
@@ -225,7 +225,7 @@ const InputField = React.forwardRef<React.ComponentRef<typeof UIInput.Input>, II
   function InputField({ className, style, ...props }, ref) {
     const { variant: parentVariant } = useStyleContext(SCOPE);
 
-    // Комбинируем стили для поля ввода
+    // Комбінуємо стилі для поля вводу
     const fieldStyle = [
       styles.inputField,
       parentVariant === 'underlined' && styles.inputFieldUnderlined,

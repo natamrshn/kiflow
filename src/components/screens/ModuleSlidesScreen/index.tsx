@@ -1,12 +1,13 @@
 
-import { useSlidesStore, useUserProgressStore } from '@/src/stores';
+import { updateLastSlideId } from '@/src/services/courses';
+import { useAuthStore, useSlidesStore, useUserProgressStore } from '@/src/stores';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import CourseSwiper from '../CourseScreen/CourseSwiper';
 
 export default function ModuleSlidesScreen() {
-  const params = useLocalSearchParams<{ id?: string }>(); // id модуля
+  const params = useLocalSearchParams<{ id?: string; courseId?: string }>(); // id модуля та courseId
   const { 
     slides, 
     isLoading, 
@@ -14,7 +15,8 @@ export default function ModuleSlidesScreen() {
     fetchSlidesByModule, 
     clearError 
   } = useSlidesStore();
-  const { setModuleProgress } = useUserProgressStore();
+  const { setModuleProgressSafe } = useUserProgressStore();
+  const { user } = useAuthStore();
 
   const totalSlides = useMemo(() => slides.length || 0, [slides]);
 
@@ -58,11 +60,20 @@ export default function ModuleSlidesScreen() {
     );
   }
 
-  // Обновляем прогресс при смене индекса в CourseSwiper через callback
+  // Оновлюємо прогрес при зміні індексу в CourseSwiper через callback
   const handleIndexChange = (index: number) => {
     if (!params.id || totalSlides === 0) return;
+    
+    // Безпечно оновлюємо прогрес модуля (не зменшуємо з 100%)
     const percent = Math.round(((index + 1) / totalSlides) * 100);
-    setModuleProgress(params.id, percent).catch(() => {});
+    setModuleProgressSafe(params.id, percent).catch(() => {});
+    
+    // Завжди оновлюємо last_slide_id, незалежно від прогресу
+    if (user?.id && params.courseId && slides[index]?.id) {
+      updateLastSlideId(user.id, params.courseId, slides[index].id).catch((error) => {
+        console.warn('Failed to update last slide id:', error);
+      });
+    }
   };
 
   return <CourseSwiper onIndexChange={handleIndexChange} />;

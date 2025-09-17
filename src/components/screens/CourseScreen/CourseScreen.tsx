@@ -27,7 +27,10 @@ export default function CourseScreen() {
   const handleModulePress = (module: any) => {
     router.push({
       pathname: '/module/[id]',
-      params: { id: module.id }, 
+      params: { 
+        id: module.id,
+        courseId: params.id // передаємо courseId для відстеження last_slide_id
+      }, 
     });
   };
 

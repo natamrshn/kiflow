@@ -118,3 +118,52 @@ export const getCourseById = async (id: string):Promise<{data: Course |null; err
   
   return { data, error };
 };
+
+/**
+ * Оновлює останній переглянутий слайд для користувача у курсі
+ */
+export const updateLastSlideId = async (
+  userId: string, 
+  courseId: string, 
+  lastSlideId: string
+): Promise<{ error: any }> => {
+  try {
+    const { error } = await supabase
+      .from('user_course_summaries')
+      .upsert(
+        {
+          user_id: userId,
+          course_id: courseId,
+          last_slide_id: lastSlideId,
+        },
+        { onConflict: 'user_id,course_id' }
+      );
+    
+    return { error };
+  } catch (err) {
+    console.error('Error updating last slide id:', err);
+    return { error: err };
+  }
+};
+
+/**
+ * Отримує інформацію про прогрес користувача по курсу, включаючи останній слайд
+ */
+export const getUserCourseProgress = async (
+  userId: string, 
+  courseId: string
+): Promise<{ data: { progress: number; last_slide_id: string | null } | null; error: any }> => {
+  try {
+    const { data, error } = await supabase
+      .from('user_course_summaries')
+      .select('progress, last_slide_id')
+      .eq('user_id', userId)
+      .eq('course_id', courseId)
+      .single();
+    
+    return { data, error };
+  } catch (err) {
+    console.error('Error fetching user course progress:', err);
+    return { data: null, error: err };
+  }
+};

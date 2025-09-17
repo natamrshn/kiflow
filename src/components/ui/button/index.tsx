@@ -33,7 +33,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   const handlePress = () => {
     if (hapticFeedback && !disabled) {
-      // Используем разные типы haptic feedback в зависимости от варианта кнопки
+      // Використовуємо різні типи haptic feedback в залежності від варіанта кнопки
       switch (variant) {
         case 'primary':
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
