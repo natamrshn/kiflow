@@ -1,27 +1,27 @@
 import { supabase } from '@/src/config/supabaseClient';
 import { create } from 'zustand';
 
-interface Question {
+interface Prompt {
   id: string;
   slide_id: string;
   text: string;
   prompt: string;
 }
 
-interface QuestionsState {
-  questions: Record<string, Question>;
+interface PromptsState {
+  prompt: Record<string, Prompt>;
   isLoading: boolean;
   error: string | null;
 
-  fetchQuestionBySlide: (slideId: string) => Promise<void>;
+  fetchPromptBySlide: (slideId: string) => Promise<void>;
 }
 
-export const useQuestionsStore = create<QuestionsState>((set, get) => ({
-  questions: {},
+export const usePromptsStore = create<PromptsState>((set, get) => ({
+    prompt: {},
   isLoading: false,
   error: null,
 
-  fetchQuestionBySlide: async (slideId: string) => {
+  fetchPromptBySlide: async (slideId: string) => {
     set({ isLoading: true, error: null });
     try {
       const { data, error } = await supabase
@@ -34,8 +34,8 @@ export const useQuestionsStore = create<QuestionsState>((set, get) => ({
 
       if (data) {
         set((state) => ({
-          questions: {
-            ...state.questions,
+          prompt: {
+            ...state.prompt,
             [slideId]: data,
           },
           isLoading: false,
