@@ -2,6 +2,7 @@ import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
 import { supabase } from '@/src/config/supabaseClient';
 import type { Course } from '@/src/constants/types/course';
+import { getUserCourseProgress } from '@/src/services/courses';
 import { useAuthStore, useUserProgressStore } from '@/src/stores';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -18,6 +19,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
   const { getCourseProgress, progressByModule } = useUserProgressStore();
   const { user } = useAuthStore();
   const [courseProgress, setCourseProgress] = useState(0);
+  const [lastSlideId, setLastSlideId] = useState<string | null>(null);
 
   // Получаем модули курса для расчёта прогресса
   useEffect(() => {
@@ -49,12 +51,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
     const timeout = setTimeout(async () => {
       try {
         await supabase
-          .from('course_progress')
+          .from('user_course_summaries')
           .upsert(
             {
               user_id: user.id,
               course_id: course.id,
               progress: courseProgress,
+              // last_slide_id будет обновляться отдельно через updateLastSlideId
             },
             { onConflict: 'user_id,course_id' }
           );
@@ -65,6 +68,26 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
 
     return () => clearTimeout(timeout);
   }, [courseProgress, course.id, user?.id]);
+
+  // Загружаем информацию о прогрессе из БД при монтировании компонента
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchUserCourseProgress = async () => {
+      try {
+        const { data, error } = await getUserCourseProgress(user.id, course.id);
+        if (!error && data) {
+          setLastSlideId(data.last_slide_id);
+          // Можем также синхронизировать progress из БД, если нужно
+          // setCourseProgress(data.progress);
+        }
+      } catch (e) {
+        console.warn('Failed to fetch user course progress:', e);
+      }
+    };
+
+    fetchUserCourseProgress();
+  }, [user?.id, course.id]);
 
   return (
     <View style={styles.card}>
@@ -94,7 +117,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             title={courseProgress > 0 ? "ПРОДОВЖИТИ" : "ПОЧАТИ КУРС"}
             variant="primary"
             size="md"
-            onPress={() => router.push(`/courses/${course.id}`)}
+            onPress={() => {
+              // Если есть last_slide_id, можно добавить параметр для возобновления с этого слайда
+              const params = lastSlideId ? { lastSlideId } : {};
+              router.push({
+                pathname: '/courses/[id]',
+                params: { id: course.id, ...params }
+              });
+            }}
             style={styles.button}
           />
         </HStack>
