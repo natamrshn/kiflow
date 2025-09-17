@@ -36,14 +36,12 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const slidePrompt = prompt[slideId]?.prompt;
       if (!slidePrompt) return;
 
-      // викликаємо AI для першого повідомлення
-      // console.log('messages', messages)
       const aiResponse = await askGemini(messages, slidePrompt, messages.length === 0);
 
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
-        text: aiResponse, // тепер тут вже відповідь AI
+        text: aiResponse,
       };
 
       setMessages([aiMsg]);
@@ -65,7 +63,6 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
     try {
       const slidePrompt = prompt[slideId]?.prompt || "";
   
-      // ❗️Передаємо в askGemini не старий messages, а одразу новий масив з userMsg
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
   
       const aiMsg: Message = {
