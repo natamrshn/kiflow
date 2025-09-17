@@ -120,7 +120,7 @@ export const getCourseById = async (id: string):Promise<{data: Course |null; err
 };
 
 /**
- * Обновляет последний просмотренный слайд для пользователя в курсе
+ * Оновлює останній переглянутий слайд для користувача у курсі
  */
 export const updateLastSlideId = async (
   userId: string, 
@@ -147,7 +147,7 @@ export const updateLastSlideId = async (
 };
 
 /**
- * Получает информацию о прогрессе пользователя по курсу, включая последний слайд
+ * Отримує інформацію про прогрес користувача по курсу, включаючи останній слайд
  */
 export const getUserCourseProgress = async (
   userId: string, 

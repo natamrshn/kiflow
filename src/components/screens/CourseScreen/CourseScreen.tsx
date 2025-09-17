@@ -29,7 +29,7 @@ export default function CourseScreen() {
       pathname: '/module/[id]',
       params: { 
         id: module.id,
-        courseId: params.id // передаем courseId для отслеживания last_slide_id
+        courseId: params.id // передаємо courseId для відстеження last_slide_id
       }, 
     });
   };

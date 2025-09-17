@@ -3,14 +3,14 @@ import { Slide } from '@/src/constants/types/slides';
 import { create } from 'zustand';
 
 interface SlidesState {
-  // State
+  // Стан
   slides: Slide[];
   currentSlideIndex: number;
   currentModuleId: string | null;
   isLoading: boolean;
   error: string | null;
   
-  // Actions
+  // Дії
   fetchSlidesByModule: (moduleId: string) => Promise<void>;
   setCurrentSlideIndex: (index: number) => void;
   nextSlide: () => void;
@@ -18,7 +18,7 @@ interface SlidesState {
   clearError: () => void;
   clearSlides: () => void;
   
-  // Internal actions
+  // Внутрішні дії
   setSlides: (slides: Slide[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -28,14 +28,14 @@ interface SlidesState {
 
 export const useSlidesStore = create<SlidesState>()(
   (set, get) => ({
-    // Initial state
+    // Початковий стан
     slides: [],
     currentSlideIndex: 0,
     currentModuleId: null,
     isLoading: false,
     error: null,
 
-    // Actions
+    // Дії
     fetchSlidesByModule: async (moduleId: string) => {
       set({ isLoading: true, error: null, currentModuleId: moduleId });
       
@@ -96,7 +96,7 @@ export const useSlidesStore = create<SlidesState>()(
       currentModuleId: null
     }),
 
-    // Internal actions
+    // Внутрішні дії
     setSlides: (slides: Slide[]) => set({ slides }),
     setLoading: (loading: boolean) => set({ isLoading: loading }),
     setError: (error: string | null) => set({ error }),

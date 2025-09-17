@@ -9,7 +9,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
   
-  // Zustand store
+  // Zustand стор
   const { getUserRole } = useAuthStore();
 
   useEffect(() => {

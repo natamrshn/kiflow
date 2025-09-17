@@ -3,19 +3,19 @@ import { Module } from '@/src/constants/types/modules';
 import { create } from 'zustand';
 
 interface ModulesState {
-  // State
+  // Стан
   modules: Module[];
   currentModule: Module | null;
   isLoading: boolean;
   error: string | null;
   
-  // Actions
+  // Дії
   fetchModulesByCourse: (courseId: string) => Promise<void>;
   setCurrentModule: (module: Module | null) => void;
   clearError: () => void;
   clearModules: () => void;
   
-  // Internal actions
+  // Внутрішні дії
   setModules: (modules: Module[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -23,13 +23,13 @@ interface ModulesState {
 
 export const useModulesStore = create<ModulesState>()(
   (set, get) => ({
-    // Initial state
+    // Початковий стан
     modules: [],
     currentModule: null,
     isLoading: false,
     error: null,
 
-    // Actions
+    // Дії
     fetchModulesByCourse: async (courseId: string) => {
       set({ isLoading: true, error: null });
       
@@ -70,7 +70,7 @@ export const useModulesStore = create<ModulesState>()(
       currentModule: null
     }),
 
-    // Internal actions
+    // Внутрішні дії
     setModules: (modules: Module[]) => set({ modules }),
     setLoading: (loading: boolean) => set({ isLoading: loading }),
     setError: (error: string | null) => set({ error }),

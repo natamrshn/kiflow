@@ -3,11 +3,11 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-// Основные цвета
+// Основні кольори
 const black = '#000000';
 const white = '#FFFFFF';
 
-// Серая палитра
+// Сіра палітра
 const gray = {
   50: '#FAFAFA',
   100: '#F5F5F5',
@@ -21,16 +21,16 @@ const gray = {
   900: '#212121',
 };
 
-// Акцентный цвет
+// Акцентний колір
 const tintColor = '#0a7ea4';
 
 export const Colors = {
-  // Основные цвета
+  // Основні кольори
   black,
   white,
   gray,
   
-  // Цвета интерфейса
+  // Кольори інтерфейсу
   text: black,
   background: white,
   tint: tintColor,
@@ -38,7 +38,7 @@ export const Colors = {
   tabIconDefault: gray[600],
   tabIconSelected: tintColor,
   
-  // Дополнительные цвета для удобства
+  // Додаткові кольори для зручності
   border: gray[300],
   placeholder: gray[400],
   disabled: gray[300],

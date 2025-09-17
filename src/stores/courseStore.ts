@@ -4,27 +4,27 @@ import { getCurrentUser } from '@/src/utils/authUtils';
 import { create } from 'zustand';
 
 interface CourseState {
-  // State
+  // Стан
   courses: Course[];
   currentCourse: Course | null;
   isLoading: boolean;
   error: string | null;
   lastFetchTime: number | null;
   
-  // Actions
+  // Дії
   fetchCourses: () => Promise<void>;
   fetchCourseById: (id: string) => Promise<Course | null>;
   setCurrentCourse: (course: Course | null) => void;
   clearError: () => void;
   refreshCourses: () => Promise<void>;
   
-  // Internal actions
+  // Внутрішні дії
   setCourses: (courses: Course[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
 
-// Cache duration in milliseconds (5 minutes)
+// Тривалість кешу у мілісекундах (5 хвилин)
 const CACHE_DURATION = 5 * 60 * 1000;
 
 const getPublicCourses = async (): Promise<{ data: Course[] | null; error: any }> => {
@@ -57,19 +57,19 @@ const getCompanyCourses = async (companyIds: string[]): Promise<Course[]> => {
 
 export const useCourseStore = create<CourseState>()(
   (set, get) => ({
-    // Initial state
+    // Початковий стан
     courses: [],
     currentCourse: null,
     isLoading: false,
     error: null,
     lastFetchTime: null,
 
-    // Actions
+    // Дії
     fetchCourses: async () => {
       const { lastFetchTime } = get();
       const now = Date.now();
       
-      // Check if we have cached data that's still valid
+      // Перевіряємо, чи є у нас кешовані дані, які ще дійсні
       if (lastFetchTime && (now - lastFetchTime) < CACHE_DURATION && get().courses.length > 0) {
         console.log('📚 CourseStore: Using cached courses');
         return;
@@ -78,11 +78,11 @@ export const useCourseStore = create<CourseState>()(
       set({ isLoading: true, error: null });
       
       try {
-        // Get current user
+        // Отримуємо поточного користувача
         const user = await getCurrentUser();
         
         if (!user) {
-          // Fetch only public courses for guests
+          // Завантажуємо лише публічні курси для гостей
           const { data, error } = await getPublicCourses();
           if (error) throw error;
           
@@ -95,7 +95,7 @@ export const useCourseStore = create<CourseState>()(
           return;
         }
 
-        // Get user's companies
+        // Отримуємо компанії користувача
         const { data: userCompanies, error: companiesError } = await supabase
           .from('company_members')
           .select('company_id')
@@ -103,7 +103,7 @@ export const useCourseStore = create<CourseState>()(
 
         if (companiesError) {
           console.error('Error fetching user companies:', companiesError);
-          // Fallback to public courses
+          // Повертаємося до публічних курсів
           const { data, error } = await getPublicCourses();
           if (error) throw error;
           
@@ -118,7 +118,7 @@ export const useCourseStore = create<CourseState>()(
 
         const companyIds = userCompanies?.map(member => member.company_id) || [];
         
-        // Fetch public courses and company courses in parallel
+        // Завантажуємо публічні курси та курси компаній паралельно
         const [publicCoursesResult, companyCourses] = await Promise.all([
           getPublicCourses(),
           getCompanyCourses(companyIds)
@@ -129,7 +129,7 @@ export const useCourseStore = create<CourseState>()(
           throw publicCoursesResult.error;
         }
 
-        // Combine courses, removing duplicates
+        // Об'єднуємо курси, видаляючи дублікати
         const publicCourses = publicCoursesResult.data || [];
         const existingIds = new Set(publicCourses.map(course => course.id));
         const uniqueCompanyCourses = companyCourses.filter(course => !existingIds.has(course.id));
@@ -191,12 +191,12 @@ export const useCourseStore = create<CourseState>()(
     clearError: () => set({ error: null }),
 
     refreshCourses: async () => {
-      // Force refresh by clearing cache
+      // Примусове оновлення шляхом очищення кешу
       set({ lastFetchTime: null });
       await get().fetchCourses();
     },
 
-    // Internal actions
+    // Внутрішні дії
     setCourses: (courses: Course[]) => set({ courses }),
     setLoading: (loading: boolean) => set({ isLoading: loading }),
     setError: (error: string | null) => set({ error }),
