@@ -3,10 +3,10 @@ import { useSlidesStore } from "@/src/stores";
 import React, { useEffect, useMemo, useRef } from "react";
 import { StyleSheet, View, useWindowDimensions } from "react-native";
 import Animated, {
-    runOnJS,
-    useAnimatedScrollHandler,
+  runOnJS,
+  useAnimatedScrollHandler,
 } from "react-native-reanimated";
-import AICourseChatPlaceholder from "./slides/AiCourseChat";
+import AICourseChat from "./slides/AICourseChat/AiCourseChat";
 import ContentWithExample from "./slides/ContentWithExample";
 import MediaPlaceholder from "./slides/MediaPlaceholder";
 import QuizSlide from "./slides/QuizeSlide";
@@ -14,7 +14,6 @@ import TextSlide from "./slides/TextSlide";
 import VideoPlayer from "./VideoPlayer";
 
 interface CourseSwiperProps {
-  // Props тепер опціональні, оскільки ми отримуємо дані зі стору
   slides?: Slide[];
   initialIndex?: number;
   onIndexChange?: (index: number) => void;
@@ -29,15 +28,12 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
 }) => {
   const { width, height } = useWindowDimensions();
   const scrollRef = useRef<Animated.ScrollView | null>(null);
-
-  // Отримуємо дані зі стору
   const {
     slides: storeSlides,
     currentSlideIndex,
     setCurrentSlideIndex,
   } = useSlidesStore();
 
-  // Використовуємо дані стору, якщо доступні, інакше повертаємося до props
   const slides = useMemo(
     () => (storeSlides.length > 0 ? storeSlides : propSlides || []),
     [storeSlides, propSlides]
@@ -106,11 +102,10 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
       case "ai":
         return (
           <View key={key} style={{ width, height }}>
-            <AICourseChatPlaceholder
+            <AICourseChat
               title={slide.slide_title}
-              isActive={isActive}
-              currentIndex={currentIndex}
-              totalSlides={totalSlides}
+              slideId={slide.id}
+
             />
           </View>
         );
