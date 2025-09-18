@@ -62,7 +62,7 @@ export default function SignOutSection() {
 
 const styles = StyleSheet.create({
   signOutSection: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray[50],
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,

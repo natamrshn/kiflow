@@ -51,7 +51,7 @@ export default function UserInfoSection({
 
 const styles = StyleSheet.create({
   infoSection: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray[50],
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,

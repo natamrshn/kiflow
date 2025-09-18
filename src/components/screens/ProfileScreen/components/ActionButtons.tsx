@@ -52,7 +52,7 @@ export default function ActionButtons({
 
 const styles = StyleSheet.create({
   actionsSection: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.gray[50],
     borderRadius: 16,
     padding: 20,
     borderWidth: 1,
@@ -67,11 +67,13 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   editModeButtons: {
-    marginTop: 12,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
   },
   actionButton: {
     flex: 1,
-    marginTop: 12,
+
   },
   editButton: {
     alignSelf: 'stretch',

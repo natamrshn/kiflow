@@ -1,12 +1,11 @@
 import { SafeAreaView } from '@/src/components/ui/safe-area-view';
-import { VStack } from '@/src/components/ui/vstack';
 import { Colors } from '@/src/constants/Colors';
 import type { User, UserUpdateData } from '@/src/constants/types/user';
 import { getCurrentUserProfile, updateCurrentUserProfile } from '@/src/services/users';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 // Імпорт компонентів
 import ActionButtons from './components/ActionButtons';
@@ -142,7 +141,7 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <VStack space="lg" style={styles.content}>
+        <View  style={styles.content}>
           
           <UserInfoSection
             user={user}
@@ -160,7 +159,7 @@ export default function ProfileScreen() {
           />
 
           <SignOutSection />
-        </VStack>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -169,10 +168,11 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.gray[50],
+    backgroundColor: Colors.white,
   },
   scrollView: {
     flex: 1,
+    
   },
   scrollContent: {
     flexGrow: 1,
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    gap: 24,
+    display: 'flex',
+    gap: 32,
   },
 });

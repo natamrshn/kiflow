@@ -27,7 +27,7 @@ export default function ProfileField({
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
       {editMode && !readOnly ? (
-        <Input style={styles.input}>
+        <Input style={styles.input} size="lg">
           <InputField
             placeholder={placeholder}
             value={value || ''}
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     minHeight: 44,
     fontSize: 20,
     color: Colors.gray[900],
-    backgroundColor: Colors.gray[50],
+    backgroundColor: Colors.white,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: Colors.gray[200],
