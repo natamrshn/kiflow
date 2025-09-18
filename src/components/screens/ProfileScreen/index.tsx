@@ -6,7 +6,7 @@ import { getCurrentUserProfile, updateCurrentUserProfile } from '@/src/services/
 import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet } from 'react-native';
+import { Alert, Platform, ScrollView, StyleSheet } from 'react-native';
 
 // Імпорт компонентів
 import ActionButtons from './components/ActionButtons';
@@ -46,7 +46,11 @@ export default function ProfileScreen() {
       
       if (error) {
         console.error('Error loading profile:', error);
-        Alert.alert('Помилка', 'Не вдалося завантажити профіль');
+        if (Platform.OS === 'web') {
+          alert('Помилка: Не вдалося завантажити профіль');
+        } else {
+          Alert.alert('Помилка', 'Не вдалося завантажити профіль');
+        }
         return;
       }
       
@@ -60,7 +64,11 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       console.error('Error loading profile:', error);
-      Alert.alert('Помилка', 'Сталася помилка при завантаженні профілю');
+      if (Platform.OS === 'web') {
+        alert('Помилка: Сталася помилка при завантаженні профілю');
+      } else {
+        Alert.alert('Помилка', 'Сталася помилка при завантаженні профілю');
+      }
     } finally {
       setLoading(false);
     }
@@ -79,18 +87,30 @@ export default function ProfileScreen() {
       
       if (error) {
         console.error('Error updating profile:', error);
-        Alert.alert('Помилка', 'Не вдалося оновити ім\'я');
+        if (Platform.OS === 'web') {
+          alert('Помилка: Не вдалося оновити ім\'я');
+        } else {
+          Alert.alert('Помилка', 'Не вдалося оновити ім\'я');
+        }
         return;
       }
       
       if (data) {
         setUser(data);
         setEditMode(false);
-        Alert.alert('Успішно', 'Ім\'я оновлено');
+        if (Platform.OS === 'web') {
+          alert('Успішно: Ім\'я оновлено');
+        } else {
+          Alert.alert('Успішно', 'Ім\'я оновлено');
+        }
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Помилка', 'Сталася помилка при оновленні імені');
+      if (Platform.OS === 'web') {
+        alert('Помилка: Сталася помилка при оновленні імені');
+      } else {
+        Alert.alert('Помилка', 'Сталася помилка при оновленні імені');
+      }
     } finally {
       setUpdating(false);
     }

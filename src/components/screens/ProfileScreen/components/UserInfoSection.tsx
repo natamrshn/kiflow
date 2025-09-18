@@ -25,9 +25,9 @@ export default function UserInfoSection({
   return (
     <VStack space="md" style={styles.infoSection}>
       <ProfileField
-        label="Повне ім'я"
+        label="Fullname"
         value={editMode ? formData.full_name : (user?.full_name || '')}
-        placeholder="Введіть повне ім'я"
+        placeholder="Enter fullname"
         editMode={editMode}
         onValueChange={(value) => onFormDataChange('full_name', value)}
       />
@@ -40,7 +40,7 @@ export default function UserInfoSection({
       />
 
       <ProfileField
-        label="Дата реєстрації"
+        label="Registration date"
         value={formatDate(user?.created_at || null)}
         editMode={false}
         readOnly={true}

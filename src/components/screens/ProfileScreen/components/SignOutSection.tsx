@@ -3,36 +3,49 @@ import { VStack } from '@/src/components/ui/vstack';
 import { Colors } from '@/src/constants/Colors';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert, Platform, StyleSheet } from 'react-native';
 
 export default function SignOutSection() {
   const router = useRouter();
   const { signOut } = useAuthStore();
 
   const handleSignOut = async () => {
-    Alert.alert(
-      'Вихід з облікового запису',
-      'Ви впевнені, що хочете вийти?',
-      [
-        {
-          text: 'Скасувати',
-          style: 'cancel',
-        },
-        {
-          text: 'Вийти',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await signOut();
-              router.replace('/');
-            } catch (error) {
-              console.error('Error signing out:', error);
-              Alert.alert('Помилка', 'Не вдалося вийти з облікового запису');
-            }
+    const performSignOut = async () => {
+      try {
+        await signOut();
+        router.replace('/');
+      } catch (error) {
+        console.error('Error signing out:', error);
+        if (Platform.OS === 'web') {
+          alert('Помилка: Не вдалося вийти з облікового запису');
+        } else {
+          Alert.alert('Помилка', 'Не вдалося вийти з облікового запису');
+        }
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      const confirmed = confirm('Ви впевнені, що хочете вийти з облікового запису?');
+      if (confirmed) {
+        await performSignOut();
+      }
+    } else {
+      Alert.alert(
+        'Вихід з облікового запису',
+        'Ви впевнені, що хочете вийти?',
+        [
+          {
+            text: 'Скасувати',
+            style: 'cancel',
           },
-        },
-      ]
-    );
+          {
+            text: 'Вийти',
+            style: 'destructive',
+            onPress: performSignOut,
+          },
+        ]
+      );
+    }
   };
 
   return (

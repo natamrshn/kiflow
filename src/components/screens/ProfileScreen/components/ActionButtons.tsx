@@ -22,20 +22,20 @@ export default function ActionButtons({
   return (
     <VStack space="md" style={styles.actionsSection}>
       {editMode ? (
-        <HStack space="md">
+        <HStack space="md" style={styles.editModeButtons}>
           <Button
             title="Скасувати"
             variant="secondary"
             onPress={onCancel}
-            style={styles.actionButton}
             disabled={updating}
+            size="lg"
           />
           <Button
             title={updating ? "Збереження..." : "Зберегти"}
             variant="primary"
             onPress={onSave}
-            style={styles.actionButton}
             disabled={updating}
+            size="lg"
           />
         </HStack>
       ) : (
@@ -43,7 +43,7 @@ export default function ActionButtons({
           title="Редагувати"
           variant="primary"
           onPress={onEdit}
-          style={styles.editButton}
+          size="lg"
         />
       )}
     </VStack>
@@ -66,8 +66,12 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
+  editModeButtons: {
+    marginTop: 12,
+  },
   actionButton: {
     flex: 1,
+    marginTop: 12,
   },
   editButton: {
     alignSelf: 'stretch',
