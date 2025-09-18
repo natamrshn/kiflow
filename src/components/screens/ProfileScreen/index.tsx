@@ -11,6 +11,7 @@ import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import ActionButtons from './components/ActionButtons';
 // import AvatarSection from './components/AvatarSection';
 import LoadingState from './components/LoadingState';
+import PasswordSection from './components/PasswordSection';
 import SignOutSection from './components/SignOutSection';
 import UserInfoSection from './components/UserInfoSection';
 
@@ -156,6 +157,8 @@ export default function ProfileScreen() {
             editMode={editMode}
             onFormDataChange={handleFormDataChange}
           />
+
+          <PasswordSection />
 
           <ActionButtons
             editMode={editMode}

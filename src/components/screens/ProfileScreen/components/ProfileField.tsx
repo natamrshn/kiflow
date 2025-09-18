@@ -26,20 +26,22 @@ export default function ProfileField({
   return (
     <View style={styles.fieldContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      {editMode && !readOnly ? (
-        <Input style={styles.input} size="lg">
-          <InputField
-            placeholder={placeholder}
-            value={value || ''}
-            onChangeText={onValueChange}
-            {...inputProps}
-          />
-        </Input>
-      ) : (
-        <Text style={styles.fieldValue}>
-          {value || 'Не вказано'}
-        </Text>
-      )}
+      <Input 
+        style={[
+          styles.input, 
+          (readOnly || !editMode) && styles.inputDisabled
+        ]} 
+        size="lg"
+      >
+        <InputField
+          placeholder={placeholder}
+          value={value || (readOnly || !editMode ? 'Не вказано' : '')}
+          onChangeText={editMode && !readOnly ? onValueChange : undefined}
+          editable={editMode && !readOnly}
+          style={(readOnly || !editMode) && styles.inputFieldDisabled}
+          {...inputProps}
+        />
+      </Input>
     </View>
   );
 }
@@ -56,20 +58,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
-  fieldValue: {
-    minHeight: 44,
-    fontSize: 20,
-    color: Colors.gray[900],
-    backgroundColor: Colors.white,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: Colors.gray[200],
-    padding: 8,
-    fontWeight: '500',
-    display: 'flex',
-    alignItems: 'center',
-  },
   input: {
     marginTop: 0,
+  },
+  inputDisabled: {
+    backgroundColor: Colors.gray[50],
+    borderColor: Colors.gray[200],
+  },
+  inputFieldDisabled: {
+    color: Colors.gray[600],
   },
 });
