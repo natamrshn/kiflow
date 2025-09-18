@@ -9,6 +9,7 @@ import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 // Імпорт компонентів
 import ActionButtons from './components/ActionButtons';
+// import AvatarSection from './components/AvatarSection';
 import LoadingState from './components/LoadingState';
 import SignOutSection from './components/SignOutSection';
 import UserInfoSection from './components/UserInfoSection';
@@ -77,9 +78,10 @@ export default function ProfileScreen() {
     try {
       setUpdating(true);
       
-      // Відправляємо тільки ім'я для оновлення
+      // Відправляємо ім'я та аватар для оновлення
       const updateData = {
         full_name: formData.full_name,
+        avatar_url: formData.avatar_url,
       };
       
       const { data, error } = await updateCurrentUserProfile(updateData);
@@ -87,9 +89,9 @@ export default function ProfileScreen() {
       if (error) {
         console.error('Error updating profile:', error);
         if (Platform.OS === 'web') {
-          alert('Помилка: Не вдалося оновити ім\'я');
+          alert('Помилка: Не вдалося оновити профіль');
         } else {
-          Alert.alert('Помилка', 'Не вдалося оновити ім\'я');
+          Alert.alert('Помилка', 'Не вдалося оновити профіль');
         }
         return;
       }
@@ -98,17 +100,17 @@ export default function ProfileScreen() {
         setUser(data);
         setEditMode(false);
         if (Platform.OS === 'web') {
-          alert('Успішно: Ім\'я оновлено');
+          alert('Успішно: Профіль оновлено');
         } else {
-          Alert.alert('Успішно', 'Ім\'я оновлено');
+          Alert.alert('Успішно', 'Профіль оновлено');
         }
       }
     } catch (error) {
       console.error('Error updating profile:', error);
       if (Platform.OS === 'web') {
-        alert('Помилка: Сталася помилка при оновленні імені');
+        alert('Помилка: Сталася помилка при оновленні профілю');
       } else {
-        Alert.alert('Помилка', 'Сталася помилка при оновленні імені');
+        Alert.alert('Помилка', 'Сталася помилка при оновленні профілю');
       }
     } finally {
       setUpdating(false);
@@ -120,6 +122,7 @@ export default function ProfileScreen() {
       setFormData(prev => ({
         ...prev,
         full_name: user.full_name || '',
+        avatar_url: user.avatar_url || '',
       }));
     }
     setEditMode(false);
@@ -142,7 +145,11 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View  style={styles.content}>
-          
+          {/* <AvatarSection
+            avatarUrl={formData.avatar_url}
+            editMode={editMode}
+            onAvatarUrlChange={(url) => handleFormDataChange('avatar_url', url)}
+          /> */}
           <UserInfoSection
             user={user}
             formData={formData}
