@@ -1,6 +1,7 @@
 import { Input, InputField } from '@/src/components/ui/input';
 import { Text } from '@/src/components/ui/text';
 import { View } from '@/src/components/ui/view';
+import { Colors } from '@/src/constants/Colors';
 import { StyleSheet, TextInputProps } from 'react-native';
 
 interface ProfileFieldProps {
@@ -45,20 +46,30 @@ export default function ProfileField({
 
 const styles = StyleSheet.create({
   fieldContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   fieldLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
-    marginBottom: 4,
+    color: Colors.gray[700],
+    marginBottom: 8,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
   fieldValue: {
-    fontSize: 16,
-    color: '#333',
-    paddingVertical: 8,
+    height: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 18,
+    color: Colors.gray[900],
+    backgroundColor: Colors.gray[50],
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.gray[200],
+    fontWeight: '500',
   },
   input: {
-    marginTop: 4,
+    marginTop: 0,
   },
 });

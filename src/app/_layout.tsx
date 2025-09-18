@@ -75,7 +75,7 @@ export default function RootLayout() {
       <Stack.Screen 
         name="profile" 
         options={{ 
-          headerShown: false 
+          headerShown: true 
         }} 
       />
       <Stack.Screen name="+not-found" />

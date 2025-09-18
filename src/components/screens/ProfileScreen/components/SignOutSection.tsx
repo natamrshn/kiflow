@@ -1,5 +1,6 @@
 import Button from '@/src/components/ui/button';
 import { VStack } from '@/src/components/ui/vstack';
+import { Colors } from '@/src/constants/Colors';
 import { useAuthStore } from '@/src/stores/authStore';
 import { useRouter } from 'expo-router';
 import { Alert, StyleSheet } from 'react-native';
@@ -48,9 +49,18 @@ export default function SignOutSection() {
 
 const styles = StyleSheet.create({
   signOutSection: {
-    paddingTop: 20,
-    paddingBottom: 30,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.gray[200],
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
 });

@@ -1,5 +1,6 @@
 import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { VStack } from '@/src/components/ui/vstack';
+import { Colors } from '@/src/constants/Colors';
 import type { User, UserUpdateData } from '@/src/constants/types/user';
 import { getCurrentUserProfile, updateCurrentUserProfile } from '@/src/services/users';
 import { useAuthStore } from '@/src/stores/authStore';
@@ -9,9 +10,7 @@ import { Alert, ScrollView, StyleSheet } from 'react-native';
 
 // Імпорт компонентів
 import ActionButtons from './components/ActionButtons';
-import AvatarSection from './components/AvatarSection';
 import LoadingState from './components/LoadingState';
-import ProfileHeader from './components/ProfileHeader';
 import SignOutSection from './components/SignOutSection';
 import UserInfoSection from './components/UserInfoSection';
 
@@ -71,22 +70,27 @@ export default function ProfileScreen() {
     try {
       setUpdating(true);
       
-      const { data, error } = await updateCurrentUserProfile(formData);
+      // Відправляємо тільки ім'я для оновлення
+      const updateData = {
+        full_name: formData.full_name,
+      };
+      
+      const { data, error } = await updateCurrentUserProfile(updateData);
       
       if (error) {
         console.error('Error updating profile:', error);
-        Alert.alert('Помилка', 'Не вдалося оновити профіль');
+        Alert.alert('Помилка', 'Не вдалося оновити ім\'я');
         return;
       }
       
       if (data) {
         setUser(data);
         setEditMode(false);
-        Alert.alert('Успішно', 'Профіль оновлено');
+        Alert.alert('Успішно', 'Ім\'я оновлено');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Помилка', 'Сталася помилка при оновленні профілю');
+      Alert.alert('Помилка', 'Сталася помилка при оновленні імені');
     } finally {
       setUpdating(false);
     }
@@ -94,11 +98,10 @@ export default function ProfileScreen() {
 
   const handleCancel = () => {
     if (user) {
-      setFormData({
+      setFormData(prev => ({
+        ...prev,
         full_name: user.full_name || '',
-        email: user.email || '',
-        avatar_url: user.avatar_url || '',
-      });
+      }));
     }
     setEditMode(false);
   };
@@ -120,14 +123,7 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <VStack space="lg" style={styles.content}>
-          <ProfileHeader />
           
-          <AvatarSection
-            avatarUrl={formData.avatar_url}
-            editMode={editMode}
-            onAvatarUrlChange={(url) => handleFormDataChange('avatar_url', url)}
-          />
-
           <UserInfoSection
             user={user}
             formData={formData}
@@ -153,15 +149,17 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.gray[50],
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
+    paddingBottom: 32,
   },
   content: {
     padding: 20,
+    gap: 24,
   },
 });

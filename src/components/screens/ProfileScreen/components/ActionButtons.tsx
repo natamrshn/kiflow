@@ -1,6 +1,7 @@
 import Button from '@/src/components/ui/button';
 import { HStack } from '@/src/components/ui/hstack';
 import { VStack } from '@/src/components/ui/vstack';
+import { Colors } from '@/src/constants/Colors';
 import { StyleSheet } from 'react-native';
 
 interface ActionButtonsProps {
@@ -51,13 +52,24 @@ export default function ActionButtons({
 
 const styles = StyleSheet.create({
   actionsSection: {
-    paddingTop: 20,
+    backgroundColor: Colors.white,
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: Colors.gray[200],
+    shadowColor: Colors.black,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
   },
   actionButton: {
     flex: 1,
   },
   editButton: {
-    alignSelf: 'center',
-    minWidth: 150,
+    alignSelf: 'stretch',
   },
 });
