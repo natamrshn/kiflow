@@ -60,15 +60,12 @@ export default function ModuleSlidesScreen() {
     );
   }
 
-  // Оновлюємо прогрес при зміні індексу в CourseSwiper через callback
   const handleIndexChange = (index: number) => {
     if (!params.id || totalSlides === 0) return;
     
-    // Безпечно оновлюємо прогрес модуля (не зменшуємо з 100%)
     const percent = Math.round(((index + 1) / totalSlides) * 100);
     setModuleProgressSafe(params.id, percent).catch(() => {});
     
-    // Завжди оновлюємо last_slide_id, незалежно від прогресу
     if (user?.id && params.courseId && slides[index]?.id) {
       updateLastSlideId(user.id, params.courseId, slides[index].id).catch((error) => {
         console.warn('Failed to update last slide id:', error);

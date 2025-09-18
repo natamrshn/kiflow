@@ -8,6 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 import AICourseChat from "./slides/AICourseChat/AiCourseChat";
 import ContentWithExample from "./slides/ContentWithExample";
+import DashboardSlide from "./slides/DashboardSlide";
 import MediaPlaceholder from "./slides/MediaPlaceholder";
 import QuizSlide from "./slides/QuizeSlide";
 import TextSlide from "./slides/TextSlide";
@@ -121,6 +122,16 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
             />
           </View>
         );
+
+        case "dashboard":
+          return (
+            <View key={key} style={{ width, height }}>
+              <DashboardSlide
+                title={slide.slide_title}
+              />
+            </View>
+          );
+  
 
       default:
         return (
