@@ -4,7 +4,6 @@ import { useAuthStore } from '@/src/stores/authStore';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { Platform } from 'react-native';
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -16,25 +15,6 @@ export default function RootLayout() {
   useEffect(() => {
     // Initialize auth state when app starts
     checkSession();
-    
-    // Disable Google Cast SDK on web to prevent console errors
-    if (Platform.OS === 'web') {
-      // Set global variable to disable Cast SDK
-      (window as any).cast = undefined;
-      (window as any).chrome = (window as any).chrome || {};
-      (window as any).chrome.cast = undefined;
-      
-      // Disable cast sender script loading
-      const originalCreateElement = document.createElement;
-      document.createElement = function(tagName: string) {
-        const element = originalCreateElement.call(this, tagName);
-        if (tagName.toLowerCase() === 'script' && element.src && element.src.includes('cast_sender')) {
-          console.log('Blocked cast_sender script loading');
-          return element; // Return element but don't append it
-        }
-        return element;
-      };
-    }
   }, [checkSession]);
 
   if (!loaded) {
@@ -88,6 +68,12 @@ export default function RootLayout() {
       />
       <Stack.Screen 
         name="auth/registration" 
+        options={{ 
+          headerShown: false 
+        }} 
+      />
+      <Stack.Screen 
+        name="profile" 
         options={{ 
           headerShown: false 
         }} 

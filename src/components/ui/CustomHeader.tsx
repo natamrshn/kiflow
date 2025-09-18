@@ -1,7 +1,7 @@
 // src/components/CustomHeader.tsx
 import { useAuthStore } from "@/src/stores/authStore";
 import { Href, useRouter } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppRoute } from "../screens/HomePageScreen/NavigationButton";
 import Button from "./button";
@@ -28,6 +28,10 @@ export default function CustomHeader() {
 
   const navigateTo = (route: AppRoute) => {
     router.push(route as Href);
+  };
+
+  const navigateToProfile = () => {
+    router.push('/profile' as Href);
   };
 
   return (
@@ -57,10 +61,12 @@ export default function CustomHeader() {
           />
         ) : (
           <>
-            <Image
-              source={{ uri: defaultAvatarUrl }}
-              style={styles.avatar}
-            />
+            <TouchableOpacity onPress={navigateToProfile}>
+              <Image
+                source={{ uri: defaultAvatarUrl }}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
             <Button
               title="Logout"
               variant="secondary"
