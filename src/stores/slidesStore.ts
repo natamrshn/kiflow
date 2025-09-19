@@ -23,6 +23,8 @@ interface SlidesState {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setCurrentModuleId: (moduleId: string | null) => void;
+  getCurrentSlideId: () => string | null;
+
 }
 
 
@@ -101,5 +103,10 @@ export const useSlidesStore = create<SlidesState>()(
     setLoading: (loading: boolean) => set({ isLoading: loading }),
     setError: (error: string | null) => set({ error }),
     setCurrentModuleId: (moduleId: string | null) => set({ currentModuleId: moduleId }),
+
+    getCurrentSlideId: () => {
+      const { slides, currentSlideIndex } = get();
+      return slides[currentSlideIndex]?.id ?? null;
+    },
   })
 );

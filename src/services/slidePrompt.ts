@@ -2,10 +2,9 @@ import { supabase } from '@/src/config/supabaseClient';
 import { create } from 'zustand';
 
 interface Prompt {
-  id: string;
   slide_id: string;
-  text: string;
   prompt: string;
+  question: string;
 }
 
 interface PromptsState {
@@ -16,8 +15,8 @@ interface PromptsState {
   fetchPromptBySlide: (slideId: string) => Promise<void>;
 }
 
-export const usePromptsStore = create<PromptsState>((set, get) => ({
-    prompt: {},
+export const usePromptsStore = create<PromptsState>((set) => ({
+  prompt: {},
   isLoading: false,
   error: null,
 
@@ -26,9 +25,9 @@ export const usePromptsStore = create<PromptsState>((set, get) => ({
     try {
       const { data, error } = await supabase
         .from('slide_ai_prompts')
-        .select('*')
+        .select('slide_id, prompt, question')
         .eq('slide_id', slideId)
-        .single(); // якщо по одному питанню на слайд
+        .single();
 
       if (error) throw error;
 
@@ -36,7 +35,11 @@ export const usePromptsStore = create<PromptsState>((set, get) => ({
         set((state) => ({
           prompt: {
             ...state.prompt,
-            [slideId]: data,
+            [slideId]: {
+              slide_id: data.slide_id,
+              question: data.question,
+              prompt: data.prompt,
+            },
           },
           isLoading: false,
         }));
@@ -46,3 +49,6 @@ export const usePromptsStore = create<PromptsState>((set, get) => ({
     }
   },
 }));
+
+
+

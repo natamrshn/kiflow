@@ -3,15 +3,23 @@ import { buildPrompt } from "./buildPrompt";
 
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 
+export interface GeminiResponse {
+  content: string;
+  rating: any | null;
+}
+
 export async function askGemini(
   messages: Message[],
   slidePrompt: string,
   isFirstMessage: boolean,
   model: string = "gemini-2.0-flash"
-): Promise<string> {
+): Promise<GeminiResponse> {
   if (!GEMINI_API_KEY) {
     console.error("❌ GEMINI_API_KEY не налаштований");
-    return "⚠️ Помилка: відсутній API ключ.";
+    return {
+      content: "⚠️ Помилка: відсутній API ключ.",
+      rating: null,
+    };
   }
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -22,7 +30,7 @@ export async function askGemini(
     contents: [
       {
         role: "user",
-        parts: [{ text:  buildPrompt(slidePrompt, isFirstMessage, lastUserMessage)}],
+        parts: [{ text: buildPrompt(slidePrompt, isFirstMessage, lastUserMessage) }],
       },
     ],
     generationConfig: {
@@ -45,12 +53,35 @@ export async function askGemini(
     }
 
     const data = await response.json();
-    return (
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "⚠️ Помилка: Gemini не повернув текст."
-    );
+
+    console.log('data',data)
+
+    let rawText: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+
+    rawText = rawText.replace(/```json|```/g, "").trim();
+
+    console.log('rawText',rawText)
+
+
+
+    let parsed: GeminiResponse;
+    try {
+      parsed = JSON.parse(rawText);
+      // console.log("✅ JSON.parse success", parsed);
+    } catch (err) {
+      console.error("❌ Не вдалось розпарсити JSON:", err, rawText);
+      return {
+        content: "⚠️ Сталася помилка при обробці відповіді від AI.",
+        rating: null,
+      };
+    }
+
+    return parsed;
   } catch (err) {
     console.error("Gemini API error", err);
-    return "⚠️ Сталася помилка при отриманні відповіді від AI.";
+    return {
+      content: "⚠️ Сталася помилка при отриманні відповіді від AI.",
+      rating: null,
+    };
   }
 }

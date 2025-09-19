@@ -1,9 +1,11 @@
 import { Icon } from '@/src/components/ui/icon';
 import { usePromptsStore } from '@/src/services/slidePrompt';
+import { useAuthStore, useSlidesStore } from '@/src/stores';
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { askGemini } from './askGemini';
+import { formatAIResponseForChat } from './formatAIResponseForChat';
 
 interface Message {
   id: string;
@@ -24,6 +26,10 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [loading, setLoading] = useState(false);
 
   const { prompt, fetchPromptBySlide } = usePromptsStore();
+  const { user } = useAuthStore();
+
+
+
 
   useEffect(() => {
     if (slideId) {
@@ -33,15 +39,15 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
 
   useEffect(() => {
     const loadInitialPrompt = async () => {
-      const slidePrompt = prompt[slideId]?.prompt;
+      const slidePrompt = prompt[slideId]?.question;
       if (!slidePrompt) return;
 
-      const aiResponse = await askGemini(messages, slidePrompt, messages.length === 0);
+      // const aiResponse = await askGemini(messages, slidePrompt, messages.length === 0);
 
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
-        text: aiResponse,
+        text: slidePrompt,
       };
 
       setMessages([aiMsg]);
@@ -64,11 +70,21 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const slidePrompt = prompt[slideId]?.prompt || "";
   
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
+      const currentSlideId = useSlidesStore.getState().getCurrentSlideId();
+
+      // if(currentSlideId){
+      //   if(user){
+      //     await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
+      //   }
+      // }
+
+      const chatText = formatAIResponseForChat(aiResponse);
+
   
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
-        text: aiResponse,
+        text: chatText,
       };
   
       setMessages((prev) => [...prev, aiMsg]);
