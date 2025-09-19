@@ -95,7 +95,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
           <video
             ref={videoRef}
             src={uri || undefined}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '80%', objectFit: 'cover' }}
             preload='auto'
           />
           {needsUserInteraction && inView && (
@@ -113,7 +113,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ uri, mux }) => {
           ref={muxPlayerRef}
           playbackId={mux}
           streamType='on-demand'
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          style={{ width: '100%', height: '80%', objectFit: 'cover' }}
           autoPlay={inView}
           muted
           cast={false}
