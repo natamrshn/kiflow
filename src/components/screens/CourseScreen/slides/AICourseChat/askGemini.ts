@@ -60,14 +60,10 @@ export async function askGemini(
 
     rawText = rawText.replace(/```json|```/g, "").trim();
 
-    console.log('rawText',rawText)
-
-
 
     let parsed: GeminiResponse;
     try {
       parsed = JSON.parse(rawText);
-      // console.log("✅ JSON.parse success", parsed);
     } catch (err) {
       console.error("❌ Не вдалось розпарсити JSON:", err, rawText);
       return {

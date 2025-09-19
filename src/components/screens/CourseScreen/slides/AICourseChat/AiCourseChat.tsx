@@ -42,8 +42,6 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const slidePrompt = prompt[slideId]?.question;
       if (!slidePrompt) return;
 
-      // const aiResponse = await askGemini(messages, slidePrompt, messages.length === 0);
-
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
