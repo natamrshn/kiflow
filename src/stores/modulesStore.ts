@@ -48,7 +48,6 @@ export const useModulesStore = create<ModulesState>()(
           error: null 
         });
         
-        console.log(`📚 ModulesStore: Loaded ${data?.length || 0} modules for course ${courseId}`);
       } catch (error: any) {
         console.error('❌ ModulesStore: Error fetching modules:', error);
         set({ 

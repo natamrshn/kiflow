@@ -1,4 +1,5 @@
 import { Icon } from '@/src/components/ui/icon';
+import { saveUserRating } from '@/src/services/main_rating';
 import { usePromptsStore } from '@/src/services/slidePrompt';
 import { SafeAreaView } from 'react-native-safe-area-context';
 // import { useSlidesStore } from '@/src/stores'; // Пока не используется
@@ -71,11 +72,15 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
       // const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); // Пока не используется
 
-      // if(currentSlideId){
-      //   if(user){
-      //     await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
-      //   }
-      // }
+      console.log('aiResponse',aiResponse.rating.overall_score)
+
+      if(currentSlideId){
+        if(user){
+          if (aiResponse.rating.overall_score){
+            await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
+          }
+        }
+      }
 
       const chatText = formatAIResponseForChat(aiResponse);
 

@@ -15,20 +15,16 @@ export default function WelcomeScreen() {
   // },[isGuest])
 
   const handleSignIn = () => {
-    console.log('🔵 WelcomeScreen: handleSignIn called');
     try {
       router.push('/auth/login');
-      console.log('✅ WelcomeScreen: router.push(/auth/login) executed');
     } catch (error) {
       console.error('❌ WelcomeScreen: Error navigating to login:', error);
     }
   };
 
   const handleSignUp = () => {
-    console.log('🔵 WelcomeScreen: handleSignUp called');
     try {
       router.push('/auth/registration');
-      console.log('✅ WelcomeScreen: router.push(/auth/registration) executed');
     } catch (error) {
       console.error('❌ WelcomeScreen: Error navigating to registration:', error);
     }

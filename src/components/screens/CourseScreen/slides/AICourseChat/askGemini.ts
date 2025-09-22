@@ -54,25 +54,44 @@ export async function askGemini(
 
     const data = await response.json();
 
-    console.log('data',data)
+    // let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
-    let rawText: string = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+    // // Замінюємо реальні переноси рядків на \n
+    // rawText = rawText.replace(/```json|```/g, "").trim();
 
+    // console.log('rawText', rawText)
+
+
+    // let parsed: GeminiResponse;
+
+    let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+
+    // чистимо від ```json ... ```
     rawText = rawText.replace(/```json|```/g, "").trim();
-
-
-    let parsed: GeminiResponse;
-    try {
-      parsed = JSON.parse(rawText);
-    } catch (err) {
-      console.error("❌ Не вдалось розпарсити JSON:", err, rawText);
-      return {
-        content: "⚠️ Сталася помилка при обробці відповіді від AI.",
-        rating: null,
-      };
+    
+    // залишаємо тільки JSON (від першої { до останньої })
+    if (!rawText.startsWith("{")) {
+      const start = rawText.indexOf("{");
+      const end = rawText.lastIndexOf("}");
+      if (start !== -1 && end !== -1) {
+        rawText = rawText.slice(start, end + 1);
+      }
     }
 
-    return parsed;
+  console.log('rawText', rawText)
+
+let parsed: GeminiResponse;
+try {
+  parsed = JSON.parse(rawText);
+
+  console.log('parsed',parsed)
+} catch (err) {
+  console.error("❌ JSON parse error:", err, rawText);
+  parsed = { content: rawText, rating: null };
+}
+
+return parsed;
+
   } catch (err) {
     console.error("Gemini API error", err);
     return {

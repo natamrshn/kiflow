@@ -57,9 +57,7 @@ export const useSlidesStore = create<SlidesState>()(
           error: null 
         });
         
-        console.log(`📚 SlidesStore: Loaded ${data?.length || 0} slides for module ${moduleId}`);
       } catch (error: any) {
-        console.error('❌ SlidesStore: Error fetching slides:', error);
         set({ 
           error: error.message || 'Failed to fetch slides', 
           isLoading: false 

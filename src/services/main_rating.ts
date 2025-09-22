@@ -31,7 +31,6 @@ export const saveUserRating = async (
       return { data: null, error };
     }
 
-    console.log('✅ Оцінка успішно збережена/оновлена:', data);
     return { data, error: null };
   } catch (err: any) {
     console.error('❌ Виняток при збереженні оцінки:', err.message);
