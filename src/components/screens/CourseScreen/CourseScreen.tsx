@@ -15,6 +15,8 @@ export default function CourseScreen() {
     clearError 
   } = useModulesStore();
   const { getModuleProgress } = useUserProgressStore();
+  const { setCurrentModule } = useModulesStore.getState();
+
 
   useEffect(() => {
     if (!params.id) return;
@@ -25,11 +27,12 @@ export default function CourseScreen() {
   }, [params.id, fetchModulesByCourse]);
 
   const handleModulePress = (module: any) => {
+    setCurrentModule(module);
     router.push({
       pathname: '/module/[id]',
       params: { 
         id: module.id,
-        courseId: params.id // передаємо courseId для відстеження last_slide_id
+        courseId: params.id 
       }, 
     });
   };

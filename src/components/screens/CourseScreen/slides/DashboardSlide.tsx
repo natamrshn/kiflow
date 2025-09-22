@@ -1,5 +1,7 @@
+import { getUserModuleRating } from '@/src/services/main_rating';
+import { useAuthStore, useModulesStore } from '@/src/stores';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 interface DashboardSlideProps {
@@ -31,6 +33,28 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
 
   const [summary] = useState<UserAssessmentSummary>(mockSummary);
 
+
+  const { user } = useAuthStore();
+  const currentModuleId = useModulesStore.getState().currentModule?.id;
+  const [moduleAverage, setModuleAverage] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchModuleRating = async () => {
+      if (!user || !currentModuleId) return;
+
+      const { data, error } = await getUserModuleRating(user.id, currentModuleId);
+      if (error) {
+        console.error('❌ Помилка при отриманні оцінки за модуль:', error);
+        return;
+      }
+
+      setModuleAverage(data?.rating ?? null);
+    };
+
+    fetchModuleRating();
+  }, [user, currentModuleId]);
+
+
   return (
     <View style={styles.screen}>
       <View style={styles.card}>
@@ -57,7 +81,7 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
             <View style={[styles.statBox, { backgroundColor: '#dcfce7' }]}>
               <Text style={styles.statLabel}>Середній бал</Text>
               <Text style={[styles.statValue, { color: '#15803d' }]}>
-                {summary.overall_average?.toFixed(1)}/10
+                {moduleAverage !== null ? moduleAverage.toFixed(1) : '-'} /10
               </Text>
             </View>
 

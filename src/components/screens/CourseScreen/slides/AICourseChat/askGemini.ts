@@ -54,22 +54,10 @@ export async function askGemini(
 
     const data = await response.json();
 
-    // let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-
-    // // Замінюємо реальні переноси рядків на \n
-    // rawText = rawText.replace(/```json|```/g, "").trim();
-
-    // console.log('rawText', rawText)
-
-
-    // let parsed: GeminiResponse;
-
     let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
-    // чистимо від ```json ... ```
     rawText = rawText.replace(/```json|```/g, "").trim();
     
-    // залишаємо тільки JSON (від першої { до останньої })
     if (!rawText.startsWith("{")) {
       const start = rawText.indexOf("{");
       const end = rawText.lastIndexOf("}");

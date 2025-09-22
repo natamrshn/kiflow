@@ -1,12 +1,11 @@
 import { Icon } from '@/src/components/ui/icon';
-import { usePromptsStore } from '@/src/services/slidePrompt';
-import { SafeAreaView } from 'react-native-safe-area-context';
-// import { useSlidesStore } from '@/src/stores'; // Пока не используется
 import { saveUserRating } from '@/src/services/main_rating';
-import { useAuthStore, useSlidesStore } from '@/src/stores';
+import { usePromptsStore } from '@/src/services/slidePrompt';
+import { useAuthStore, useModulesStore, useSlidesStore } from '@/src/stores';
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { askGemini } from './askGemini';
 import { formatAIResponseForChat } from './formatAIResponseForChat';
 
@@ -27,12 +26,8 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { prompt, fetchPromptBySlide } = usePromptsStore();
-  const { user } = useAuthStore(); // Пока не используется
-
-
-
+  const { user } = useAuthStore(); 
 
   useEffect(() => {
     if (slideId) {
@@ -63,21 +58,24 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
     if (!input.trim()) return;
   
     const userMsg: Message = { id: Date.now().toString(), role: 'user', text: input.trim() };
-    setMessages((prev) => [...prev, userMsg]); // оновлюємо стан
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
   
     try {
       const slidePrompt = prompt[slideId]?.prompt || "";
-  
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
-      const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); // Пока не используется
-
-
-      if (currentSlideId && user && aiResponse.rating.overall_score) {
-        await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
+      const currentModuleId = useModulesStore.getState().currentModule?.id;
+      const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); 
+      console.log('currentModuleId',currentModuleId)
+      if (currentSlideId && user && aiResponse.rating.overall_score && currentModuleId) {
+        await saveUserRating(
+          currentSlideId,
+          user.id,
+          aiResponse.rating.overall_score,
+          currentModuleId
+        );
       }
-
       const chatText = formatAIResponseForChat(aiResponse);
 
   

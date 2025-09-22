@@ -73,6 +73,9 @@ export default function ModuleSlidesScreen() {
     }
   };
 
+
+  console.log('gjjggj')
+
   return <CourseSwiper onIndexChange={handleIndexChange} />;
 }
 
