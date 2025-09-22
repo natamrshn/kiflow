@@ -1,6 +1,6 @@
 import { Icon } from '@/src/components/ui/icon';
-import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { usePromptsStore } from '@/src/services/slidePrompt';
+import { SafeAreaView } from 'react-native-safe-area-context';
 // import { useSlidesStore } from '@/src/stores'; // Пока не используется
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
