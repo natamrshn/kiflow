@@ -58,18 +58,15 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
   return (
     <View style={styles.screen}>
       <View style={styles.card}>
-        {/* Іконка */}
         <View style={styles.iconWrapper}>
           <MaterialIcons name="insert-chart" size={40} color="#7c3aed" />
         </View>
 
-        {/* Заголовки */}
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>
           Ця сторінка відображає твою персональну статистику
         </Text>
 
-        {/* Загальна статистика */}
         <View style={styles.statsCard}>
           <Text style={styles.statsTitle}>Статистика</Text>
           <View style={styles.statsRow}>
