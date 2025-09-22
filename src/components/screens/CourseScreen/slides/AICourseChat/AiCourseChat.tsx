@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // import { useSlidesStore } from '@/src/stores'; // Пока не используется
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { askGemini } from './askGemini';
 import { formatAIResponseForChat } from './formatAIResponseForChat';
 
@@ -178,7 +178,14 @@ const styles = StyleSheet.create({
   userBubble: { backgroundColor: '#f1f5f9', alignSelf: 'flex-end' },
   messageIcon: { marginRight: 6 },
   messageText: { fontSize: 16, color: '#0f172a', lineHeight: 22 },
-  footer: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 8 },
+  footer: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    gap: 8, 
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'web' ? 60 : 8,
+    marginBottom: Platform.OS === 'web' ? 20 : 0,
+  },
   input: {
     flex: 1,
     minHeight: 40,
