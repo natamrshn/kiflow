@@ -1,8 +1,9 @@
 import { Icon } from '@/src/components/ui/icon';
-import { saveUserRating } from '@/src/services/main_rating';
 import { usePromptsStore } from '@/src/services/slidePrompt';
 import { SafeAreaView } from 'react-native-safe-area-context';
 // import { useSlidesStore } from '@/src/stores'; // Пока не используется
+import { saveUserRating } from '@/src/services/main_rating';
+import { useAuthStore, useSlidesStore } from '@/src/stores';
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -28,7 +29,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [loading, setLoading] = useState(false);
 
   const { prompt, fetchPromptBySlide } = usePromptsStore();
-  // const { user } = useAuthStore(); // Пока не используется
+  const { user } = useAuthStore(); // Пока не используется
 
 
 
@@ -70,16 +71,11 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const slidePrompt = prompt[slideId]?.prompt || "";
   
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
-      // const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); // Пока не используется
+      const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); // Пока не используется
 
-      console.log('aiResponse',aiResponse.rating.overall_score)
 
-      if(currentSlideId){
-        if(user){
-          if (aiResponse.rating.overall_score){
-            await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
-          }
-        }
+      if (currentSlideId && user && aiResponse.rating.overall_score) {
+        await saveUserRating(currentSlideId, user.id, aiResponse.rating.overall_score);
       }
 
       const chatText = formatAIResponseForChat(aiResponse);
