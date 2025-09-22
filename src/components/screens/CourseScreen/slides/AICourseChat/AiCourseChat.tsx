@@ -1,6 +1,7 @@
 import { Icon } from '@/src/components/ui/icon';
+import { SafeAreaView } from '@/src/components/ui/safe-area-view';
 import { usePromptsStore } from '@/src/services/slidePrompt';
-import { useAuthStore, useSlidesStore } from '@/src/stores';
+// import { useSlidesStore } from '@/src/stores'; // Пока не используется
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -26,7 +27,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [loading, setLoading] = useState(false);
 
   const { prompt, fetchPromptBySlide } = usePromptsStore();
-  const { user } = useAuthStore();
+  // const { user } = useAuthStore(); // Пока не используется
 
 
 
@@ -68,7 +69,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       const slidePrompt = prompt[slideId]?.prompt || "";
   
       const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
-      const currentSlideId = useSlidesStore.getState().getCurrentSlideId();
+      // const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); // Пока не используется
 
       // if(currentSlideId){
       //   if(user){
@@ -95,7 +96,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{title}</Text>
       </View>
@@ -139,7 +140,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
           <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
