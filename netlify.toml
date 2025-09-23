@@ -1,6 +1,6 @@
 [build]
   command = "npx expo export --platform web --output-dir dist"
-  publish = "dist/client"
+  publish = "dist/server"
   functions = "dist/server/_expo/functions"
 
 [functions]
@@ -9,5 +9,25 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/courses/*"
+  to = "/courses/[id].html"
+  status = 200
+
+[[redirects]]
+  from = "/module/*"
+  to = "/module/[id].html"
+  status = 200
+
+[[redirects]]
+  from = "/_sitemap"
+  to = "/_sitemap.html"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
 
 
