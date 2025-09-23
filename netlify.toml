@@ -1,5 +1,5 @@
 [build]
-  command = "npx expo export --platform web --output-dir dist"
+  command = "npx expo export --platform web --output-dir dist && cp -R dist/client/_expo dist/server/_expo || true && cp -R dist/client/assets dist/server/assets || true && cp dist/client/favicon.ico dist/server/favicon.ico || true"
   publish = "dist/server"
   functions = "dist/server/_expo/functions"
 
