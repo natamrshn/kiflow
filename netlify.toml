@@ -1,0 +1,13 @@
+[build]
+  command = "npx expo export --platform web --output-dir dist"
+  publish = "dist/client"
+  functions = "dist/server/_expo/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@google/generative-ai"]
+
+[build.environment]
+  NODE_VERSION = "20"
+
+
