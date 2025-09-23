@@ -1,6 +1,6 @@
 
 import { updateLastSlideId } from '@/src/services/courses';
-import { useAuthStore, useSlidesStore, useUserProgressStore } from '@/src/stores';
+import { useAuthStore, useCourseStore, useSlidesStore, useUserProgressStore } from '@/src/stores';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -18,6 +18,16 @@ export default function ModuleSlidesScreen() {
   const { setModuleProgressSafe } = useUserProgressStore();
   const { user } = useAuthStore();
 
+  const { fetchCourseById } = useCourseStore.getState();
+
+  useEffect(() => {
+    if (!params.courseId) return;
+
+    fetchCourseById(params.courseId).catch((err) => {
+      console.error('❌ Error fetching course:', err);
+    });
+  }, [params.courseId]);
+
   const totalSlides = useMemo(() => slides.length || 0, [slides]);
 
   useEffect(() => {
@@ -27,6 +37,8 @@ export default function ModuleSlidesScreen() {
       console.error('Unexpected error fetching slides:', err);
     });
   }, [params.id, fetchSlidesByModule]);
+
+
 
   if (error) {
     return (
@@ -72,10 +84,6 @@ export default function ModuleSlidesScreen() {
       });
     }
   };
-
-
-  console.log('gjjggj')
-
   return <CourseSwiper onIndexChange={handleIndexChange} />;
 }
 

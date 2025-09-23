@@ -6,12 +6,14 @@ const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
 export interface GeminiResponse {
   content: string;
   rating: any | null;
+  criterias:string
 }
 
 export async function askGemini(
   messages: Message[],
   slidePrompt: string,
   isFirstMessage: boolean,
+  criteriasText: string,
   model: string = "gemini-2.0-flash"
 ): Promise<GeminiResponse> {
   if (!GEMINI_API_KEY) {
@@ -19,6 +21,7 @@ export async function askGemini(
     return {
       content: "⚠️ Помилка: відсутній API ключ.",
       rating: null,
+      criterias: criteriasText, // завжди передаємо
     };
   }
 
@@ -30,7 +33,7 @@ export async function askGemini(
     contents: [
       {
         role: "user",
-        parts: [{ text: buildPrompt(slidePrompt, isFirstMessage, lastUserMessage) }],
+        parts: [{ text: buildPrompt(slidePrompt, isFirstMessage, lastUserMessage, criteriasText) }],
       },
     ],
     generationConfig: {
@@ -55,36 +58,32 @@ export async function askGemini(
     const data = await response.json();
 
     let rawText = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-
     rawText = rawText.replace(/```json|```/g, "").trim();
-    
+
     if (!rawText.startsWith("{")) {
       const start = rawText.indexOf("{");
       const end = rawText.lastIndexOf("}");
-      if (start !== -1 && end !== -1) {
-        rawText = rawText.slice(start, end + 1);
-      }
+      if (start !== -1 && end !== -1) rawText = rawText.slice(start, end + 1);
     }
 
-  console.log('rawText', rawText)
+    let parsed: GeminiResponse;
+    try {
+      parsed = JSON.parse(rawText);
 
-let parsed: GeminiResponse;
-try {
-  parsed = JSON.parse(rawText);
+      console.log('parsed',parsed)
+      if (!parsed.criterias) parsed.criterias = criteriasText;
+    } catch (err) {
+      console.error("❌ JSON parse error:", err, rawText);
+      parsed = { content: rawText, rating: null, criterias: criteriasText };
+    }
 
-  console.log('parsed',parsed)
-} catch (err) {
-  console.error("❌ JSON parse error:", err, rawText);
-  parsed = { content: rawText, rating: null };
-}
-
-return parsed;
-
+    return parsed;
   } catch (err) {
     console.error("Gemini API error", err);
     return {
       content: "⚠️ Сталася помилка при отриманні відповіді від AI.",
       rating: null,
+      criterias: criteriasText, 
     };
   }
 }

@@ -6,8 +6,6 @@ export const saveUserRating = async (
   rating: string | number,
   moduleId?: string 
 ): Promise<{ data: any; error: any }> => {
-
-  console.log('moduleId', moduleId)
   try {
     if (!slideId || !userId || rating == null) {
       throw new Error('Не передані обовʼязкові параметри для збереження оцінки');

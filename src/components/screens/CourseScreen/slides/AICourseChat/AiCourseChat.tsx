@@ -1,7 +1,7 @@
 import { Icon } from '@/src/components/ui/icon';
 import { saveUserRating } from '@/src/services/main_rating';
 import { usePromptsStore } from '@/src/services/slidePrompt';
-import { useAuthStore, useModulesStore, useSlidesStore } from '@/src/stores';
+import { useAuthStore, useCourseStore, useCriteriaStore, useModulesStore, useSlidesStore } from '@/src/stores';
 import { MessageCircle, Send } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -27,6 +27,10 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const { prompt, fetchPromptBySlide } = usePromptsStore();
+  const { criterias, isLoading, fetchCriterias } = useCriteriaStore();
+  const courseId = useCourseStore((state) => state.currentCourse?.id);
+
+
   const { user } = useAuthStore(); 
 
   useEffect(() => {
@@ -52,7 +56,10 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
     loadInitialPrompt();
   }, [slideId, prompt]);
 
-  
+
+  useEffect(() => {
+    if(courseId) fetchCriterias(courseId);
+  }, [courseId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -64,10 +71,17 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   
     try {
       const slidePrompt = prompt[slideId]?.prompt || "";
-      const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
-      const currentModuleId = useModulesStore.getState().currentModule?.id;
+      const criteriasText = criterias
+        .map(item => `${item.key} - ${item.name.trim()}`)
+        .join('\n');
+        const aiResponse = await askGemini(
+          [...messages, userMsg],
+          slidePrompt,
+          messages.length === 0,
+          criteriasText
+        );      
+        const currentModuleId = useModulesStore.getState().currentModule?.id;
       const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); 
-      console.log('currentModuleId',currentModuleId)
       if (currentSlideId && user && aiResponse.rating.overall_score && currentModuleId) {
         await saveUserRating(
           currentSlideId,
