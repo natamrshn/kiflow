@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { askGemini } from './askGemini';
+import AudioRecorder from './AudioRecorder';
 import { formatAIResponseForChat } from './formatAIResponseForChat';
 
 interface Message {
@@ -92,6 +93,12 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       setLoading(false);
     }
   };
+
+  const handleAudioProcessed = (transcribedText: string) => {
+    if (transcribedText.trim()) {
+      setInput(transcribedText.trim());
+    }
+  };
   
 
   return (
@@ -135,9 +142,15 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
           onChangeText={setInput}
           multiline
         />
-        <TouchableOpacity onPress={handleSend} disabled={loading}>
-          <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <AudioRecorder 
+            onAudioProcessed={handleAudioProcessed}
+            disabled={loading}
+          />
+          <TouchableOpacity onPress={handleSend} disabled={loading}>
+            <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -178,15 +191,11 @@ const styles = StyleSheet.create({
   messageIcon: { marginRight: 6 },
   messageText: { fontSize: 16, color: '#0f172a', lineHeight: 22 },
   footer: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    gap: 8, 
     paddingTop: 8,
     paddingBottom: Platform.OS === 'web' ? 60 : 8,
     marginBottom: Platform.OS === 'web' ? 20 : 0,
   },
   input: {
-    flex: 1,
     minHeight: 40,
     maxHeight: 100,
     borderRadius: 12,
@@ -196,6 +205,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     backgroundColor: '#fff',
-    marginRight: 8,
+    marginBottom: 8,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
   },
 });
