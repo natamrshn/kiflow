@@ -202,6 +202,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginVertical: 6,
   },
-  dotActive: { backgroundColor: "#4CAF50" },
-  dotInactive: { backgroundColor: "#CFCFCF" },
+  dotActive: { backgroundColor: '#4CAF50' },
+  dotInactive: { backgroundColor: '#CFCFCF' },
 });
