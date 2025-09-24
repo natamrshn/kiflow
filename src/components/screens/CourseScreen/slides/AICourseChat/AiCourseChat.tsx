@@ -81,16 +81,29 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
           messages.length === 0,
           criteriasText
         );      
+        const currentSlideId = useSlidesStore.getState().getCurrentSlideId();
         const currentModuleId = useModulesStore.getState().currentModule?.id;
-      const currentSlideId = useSlidesStore.getState().getCurrentSlideId(); 
-      if (currentSlideId && user && aiResponse.rating.overall_score && currentModuleId) {
-        await saveUserRating(
-          currentSlideId,
-          user.id,
-          aiResponse.rating.overall_score,
-          currentModuleId
-        );
-      }
+
+
+        if (currentSlideId && user && aiResponse.rating?.criteriaScores && currentModuleId) {
+          const criteriaScores = aiResponse.rating.criteriaScores;
+
+          console.log('criteriaScores',criteriaScores)
+
+          for (const [criteriaKey, score] of Object.entries(criteriaScores)) {
+            try {
+              await saveUserRating(
+                currentSlideId,
+                user.id,
+                score as number,          
+                currentModuleId,
+                criteriaKey 
+              );
+            } catch (err) {
+              console.warn(`Failed to save rating for ${criteriaKey}:`, err);
+            }
+          }
+        }
       const chatText = formatAIResponseForChat(aiResponse);
 
   

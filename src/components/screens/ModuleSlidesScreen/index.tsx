@@ -1,6 +1,6 @@
 
 import { updateLastSlideId } from '@/src/services/courses';
-import { useAuthStore, useCourseStore, useSlidesStore, useUserProgressStore } from '@/src/stores';
+import { useAuthStore, useCourseStore, useModulesStore, useSlidesStore, useUserProgressStore } from '@/src/stores';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
@@ -19,6 +19,8 @@ export default function ModuleSlidesScreen() {
   const { user } = useAuthStore();
 
   const { fetchCourseById } = useCourseStore.getState();
+  const { fetchModulesByCourse, getModule, setCurrentModule} = useModulesStore.getState();
+
 
   useEffect(() => {
     if (!params.courseId) return;
@@ -26,6 +28,15 @@ export default function ModuleSlidesScreen() {
     fetchCourseById(params.courseId).catch((err) => {
       console.error('❌ Error fetching course:', err);
     });
+
+    fetchModulesByCourse(params.courseId)
+    .then(() => {
+      if (params.id) {
+        const module = getModule(params.id);
+        setCurrentModule(module); 
+      }
+    })
+    .catch(console.error);
   }, [params.courseId]);
 
   const totalSlides = useMemo(() => slides.length || 0, [slides]);

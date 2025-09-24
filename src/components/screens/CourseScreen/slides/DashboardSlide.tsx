@@ -1,4 +1,4 @@
-import { getUserModuleRating } from '@/src/services/main_rating';
+import { getAverageUserRating } from '@/src/services/main_rating';
 import { useAuthStore, useModulesStore } from '@/src/stores';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -20,20 +20,6 @@ interface UserAssessmentSummary {
 }
 
 const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
-  const mockSummary: UserAssessmentSummary = {
-    overall_average: 7.3,
-    characteristics: [
-      { criterion_id: '1', criterion_name: 'Комунікація', average_score: 8 },
-      { criterion_id: '2', criterion_name: 'Креативність', average_score: 6 },
-      { criterion_id: '3', criterion_name: 'Тайм-менеджмент', average_score: 7 },
-      { criterion_id: '4', criterion_name: 'Лідерство', average_score: 8.5 },
-      { criterion_id: '5', criterion_name: 'Аналіз', average_score: 6.5 },
-    ],
-  };
-
-  const [summary] = useState<UserAssessmentSummary>(mockSummary);
-
-
   const { user } = useAuthStore();
   const currentModuleId = useModulesStore.getState().currentModule?.id;
   const [moduleAverage, setModuleAverage] = useState<number | null>(null);
@@ -42,7 +28,7 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
     const fetchModuleRating = async () => {
       if (!user || !currentModuleId) return;
 
-      const { data, error } = await getUserModuleRating(user.id, currentModuleId);
+      const { data, error } = await getAverageUserRating(user.id, currentModuleId);
       if (error) {
         console.error('❌ Помилка при отриманні оцінки за модуль:', error);
         return;
@@ -75,12 +61,12 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
               <Text style={[styles.statValue, { color: '#1d4ed8' }]}>12 год</Text>
             </View>
 
-            <View style={[styles.statBox, { backgroundColor: '#dcfce7' }]}>
+            {moduleAverage && <View  style={[styles.statBox, { backgroundColor: '#dcfce7' }]}>
               <Text style={styles.statLabel}>Середній бал</Text>
               <Text style={[styles.statValue, { color: '#15803d' }]}>
                 {moduleAverage !== null ? moduleAverage.toFixed(1) : '-'} /10
               </Text>
-            </View>
+            </View>}
 
             <View style={[styles.statBox, { backgroundColor: '#ede9fe' }]}>
               <Text style={styles.statLabel}>Курси</Text>

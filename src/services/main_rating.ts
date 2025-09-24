@@ -4,16 +4,18 @@ export const saveUserRating = async (
   slideId: string,
   userId: string,
   rating: string | number,
-  moduleId?: string 
+  moduleId?: string,
+  key?: string
 ): Promise<{ data: any; error: any }> => {
   try {
-    if (!slideId || !userId || rating == null) {
+    if (!slideId || !userId || rating == null || !key) {
       throw new Error('Не передані обовʼязкові параметри для збереження оцінки');
     }
+
     const normalizedRating =
       typeof rating === 'string' ? parseInt(rating, 10) : rating;
 
-    const { data, error } = await supabase
+      const { data, error } = await supabase
       .from('main_rating')
       .upsert(
         [
@@ -21,10 +23,11 @@ export const saveUserRating = async (
             slide_id: slideId,
             user_id: userId,
             rating: normalizedRating,
-            module_id: moduleId, 
-          },
+            module_id: moduleId,
+            criteria_key: key
+          }
         ],
-        { onConflict: 'slide_id, user_id' } 
+        { onConflict: 'slide_id, user_id, criteria_key' }
       )
       .select();
 
@@ -41,53 +44,38 @@ export const saveUserRating = async (
 };
 
 
-export const getUserModuleRating = async (
+export const getAverageUserRating = async (
   userId: string,
   moduleId: string
-): Promise<{ data: any; error: any }> => {
+): Promise<{ data: { rating: number | null }; error: any }> => {
   try {
-    const { data, error } = await supabase
-      .from('main_rating')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('module_id', moduleId)
-      .single(); 
-
-    if (error) {
-      console.error('❌ Помилка при отриманні оцінки за модуль:', error.message);
-      return { data: null, error };
+    if (!userId || !moduleId) {
+      throw new Error('Не передані обовʼязкові параметри');
     }
 
-    return { data, error: null };
+    const { data, error } = await supabase
+      .from('main_rating')
+      .select('rating')
+      .eq('user_id', userId)
+      .eq('module_id', moduleId);
+
+    if (error) {
+      console.error('❌ Помилка при отриманні оцінок:', error.message);
+      return { data: { rating: null }, error };
+    }
+
+    if (!data || data.length === 0) {
+      return { data: { rating: null }, error: null };
+    }
+
+    const total = data.reduce((sum, item) => sum + (item.rating || 0), 0);
+    const average = total / data.length;
+
+    return { data: { rating: average }, error: null };
   } catch (err: any) {
-    console.error('❌ Виняток при отриманні оцінки за модуль:', err.message);
-    return { data: null, error: err };
+    console.error('❌ Виняток при розрахунку середнього:', err.message);
+    return { data: { rating: null }, error: err };
   }
 };
 
 
-export const getUserCourseRating = async (
-  userId: string,
-  courseId: string
-): Promise<{ data: any; error: any }> => {
-  try {
-    const { data, error } = await supabase
-      .from('main_rating')
-      .select(`
-        *,
-        modules:module_id(*)   -- робимо join на таблицю modules
-      `)
-      .eq('user_id', userId)
-      .eq('modules.course_id', courseId); 
-
-    if (error) {
-      console.error('❌ Помилка при отриманні оцінки за курс:', error.message);
-      return { data: null, error };
-    }
-
-    return { data, error: null };
-  } catch (err: any) {
-    console.error('❌ Виняток при отриманні оцінки за курс:', err.message);
-    return { data: null, error: err };
-  }
-};

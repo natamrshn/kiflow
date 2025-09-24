@@ -95,7 +95,6 @@ export const useCourseStore = create<CourseState>()(
           return;
         }
 
-        // Отримуємо компанії користувача
         const { data: userCompanies, error: companiesError } = await supabase
           .from('company_members')
           .select('company_id')
@@ -103,7 +102,6 @@ export const useCourseStore = create<CourseState>()(
 
         if (companiesError) {
           console.error('Error fetching user companies:', companiesError);
-          // Повертаємося до публічних курсів
           const { data, error } = await getPublicCourses();
           if (error) throw error;
           
@@ -118,7 +116,6 @@ export const useCourseStore = create<CourseState>()(
 
         const companyIds = userCompanies?.map(member => member.company_id) || [];
         
-        // Завантажуємо публічні курси та курси компаній паралельно
         const [publicCoursesResult, companyCourses] = await Promise.all([
           getPublicCourses(),
           getCompanyCourses(companyIds)
@@ -129,7 +126,6 @@ export const useCourseStore = create<CourseState>()(
           throw publicCoursesResult.error;
         }
 
-        // Об'єднуємо курси, видаляючи дублікати
         const publicCourses = publicCoursesResult.data || [];
         const existingIds = new Set(publicCourses.map(course => course.id));
         const uniqueCompanyCourses = companyCourses.filter(course => !existingIds.has(course.id));

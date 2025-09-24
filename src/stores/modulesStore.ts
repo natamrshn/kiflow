@@ -19,6 +19,8 @@ interface ModulesState {
   setModules: (modules: Module[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  getModule: (id: string) => Module | null;
+
 }
 
 export const useModulesStore = create<ModulesState>()(
@@ -73,5 +75,9 @@ export const useModulesStore = create<ModulesState>()(
     setModules: (modules: Module[]) => set({ modules }),
     setLoading: (loading: boolean) => set({ isLoading: loading }),
     setError: (error: string | null) => set({ error }),
+    getModule: (id: string) => {
+      const module = get().modules.find(m => m.id === id);
+      return module || null;
+    },
   })
 );
