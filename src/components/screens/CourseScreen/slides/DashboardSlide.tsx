@@ -64,7 +64,7 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
             {moduleAverage && <View  style={[styles.statBox, { backgroundColor: '#dcfce7' }]}>
               <Text style={styles.statLabel}>Середній бал</Text>
               <Text style={[styles.statValue, { color: '#15803d' }]}>
-                {moduleAverage !== null ? moduleAverage.toFixed(1) : '-'} /10
+                {moduleAverage !== null ? moduleAverage.toFixed(1) : '-'} /5
               </Text>
             </View>}
 
