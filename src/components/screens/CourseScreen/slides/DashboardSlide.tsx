@@ -3,6 +3,15 @@ import { useAuthStore, useModulesStore } from '@/src/stores';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
+import {
+  PolarAngleAxis,
+  PolarGrid,
+  PolarRadiusAxis,
+  Radar, RadarChart,
+  ResponsiveContainer
+} from 'recharts';
+
+
 
 interface DashboardSlideProps {
   title: string;
@@ -23,6 +32,14 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
   const { user } = useAuthStore();
   const currentModuleId = useModulesStore.getState().currentModule?.id;
   const [moduleAverage, setModuleAverage] = useState<number | null>(null);
+
+  const [skillsData, setSkillsData] = useState<SkillSummaryItem[]>([
+    { criterion_id: "1", criterion_name: "Креативність", average_score: 4.2 },
+    { criterion_id: "2", criterion_name: "Лідерство", average_score: 3.5 },
+    { criterion_id: "3", criterion_name: "Аналіз", average_score: 4.8 },
+    { criterion_id: "4", criterion_name: "Комунікація", average_score: 3.9 },
+    { criterion_id: "5", criterion_name: "Стресостійкість", average_score: 4.0 },
+  ]);
 
   useEffect(() => {
     const fetchModuleRating = async () => {
@@ -77,11 +94,20 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
         <View style={styles.skillsCard}>
           <Text style={styles.statsTitle}>Порівняння навичок</Text>
           {Platform.OS === 'web' ? (
-            <View style={styles.chartPlaceholder}>
-              <Text style={styles.chartPlaceholderText}>
-                📊 Тут можна підключити RadarChart (Recharts)
-              </Text>
-            </View>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={skillsData}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="criterion_name" />
+                <PolarRadiusAxis angle={30} domain={[0, 5]} />
+                <Radar
+                  name="Оцінка"
+                  dataKey="average_score"
+                  stroke="#7c3aed"
+                  fill="#7c3aed"
+                  fillOpacity={0.6}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
           ) : (
             <Text style={styles.chartPlaceholderText}>
               📊 Графік доступний лише у веб-версії
