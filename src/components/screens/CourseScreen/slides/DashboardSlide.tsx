@@ -1,4 +1,4 @@
-import { getAverageUserRating } from '@/src/services/main_rating';
+import { getAverageUserRating, getUserSkillsSummary } from '@/src/services/main_rating';
 import { useAuthStore, useModulesStore } from '@/src/stores';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -33,13 +33,8 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
   const currentModuleId = useModulesStore.getState().currentModule?.id;
   const [moduleAverage, setModuleAverage] = useState<number | null>(null);
 
-  const [skillsData, setSkillsData] = useState<SkillSummaryItem[]>([
-    { criterion_id: "1", criterion_name: "Креативність", average_score: 4.2 },
-    { criterion_id: "2", criterion_name: "Лідерство", average_score: 3.5 },
-    { criterion_id: "3", criterion_name: "Аналіз", average_score: 4.8 },
-    { criterion_id: "4", criterion_name: "Комунікація", average_score: 3.9 },
-    { criterion_id: "5", criterion_name: "Стресостійкість", average_score: 4.0 },
-  ]);
+  const [skillsData, setSkillsData] = useState<SkillSummaryItem[]>([]);
+
 
   useEffect(() => {
     const fetchModuleRating = async () => {
@@ -52,6 +47,13 @@ const DashboardSlide: React.FC<DashboardSlideProps> = ({ title }) => {
       }
 
       setModuleAverage(data?.rating ?? null);
+
+      const { data: skills, error: skillsError } = await getUserSkillsSummary(user.id, currentModuleId);
+      if (skillsError) {
+        console.error('❌ Помилка при отриманні навичок:', skillsError);
+      } else {
+        setSkillsData(skills);
+      }
     };
 
     fetchModuleRating();

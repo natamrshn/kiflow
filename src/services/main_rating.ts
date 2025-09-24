@@ -1,5 +1,13 @@
 import { supabase } from '../config/supabaseClient';
 
+
+export interface SkillSummaryItem {
+  criterion_id: string;
+  criterion_name: string;
+  average_score: number;
+}
+
+
 export const saveUserRating = async (
   slideId: string,
   userId: string,
@@ -43,7 +51,6 @@ export const saveUserRating = async (
   }
 };
 
-
 export const getAverageUserRating = async (
   userId: string,
   moduleId: string
@@ -78,6 +85,53 @@ export const getAverageUserRating = async (
   }
 };
 
+export const getUserSkillsSummary = async (
+  userId: string,
+  moduleId: string
+): Promise<{ data: SkillSummaryItem[]; error: any }> => {
+  try {
+    if (!userId || !moduleId) {
+      throw new Error('Не передані обовʼязкові параметри');
+    }
 
+    const { data: ratings, error: ratingsError } = await supabase
+      .from('main_rating')
+      .select('criteria_key, rating')
+      .eq('user_id', userId)
+      .eq('module_id', moduleId);
 
+    if (ratingsError) {
+      console.error('❌ Помилка при отриманні рейтингів:', ratingsError.message);
+      return { data: [], error: ratingsError };
+    }
 
+    if (!ratings || ratings.length === 0) {
+      return { data: [], error: null };
+    }
+
+    const criteriaKeys = ratings.map((r: any) => r.criteria_key);
+    const { data: criteriaData, error: criteriaError } = await supabase
+      .from('criterias')
+      .select('key, name')
+      .in('key', criteriaKeys);
+
+    if (criteriaError) {
+      console.error('❌ Помилка при отриманні назв критеріїв:', criteriaError.message);
+      return { data: [], error: criteriaError };
+    }
+
+    const skills: SkillSummaryItem[] = ratings.map((r: any) => {
+      const criterion = criteriaData?.find((c: any) => c.key === r.criteria_key);
+      return {
+        criterion_id: r.criteria_key,
+        criterion_name: criterion?.name || r.criteria_key,
+        average_score: r.rating || 0,
+      };
+    });
+
+    return { data: skills, error: null };
+  } catch (err: any) {
+    console.error('❌ Виняток при формуванні характеристик:', err.message);
+    return { data: [], error: err };
+  }
+};
