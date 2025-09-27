@@ -41,26 +41,43 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
   );
   const totalSlides = propTotalSlides || slides.length;
   const currentIndex = currentSlideIndex;
+  const didInitRef = useRef(false);
+
 
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
-      const idx = Math.round(event.contentOffset.y / height);
+      const viewH = event.layoutMeasurement?.height || 1;
+      const idx = Math.round(event.contentOffset.y / viewH);
       runOnJS(setCurrentSlideIndex)(idx);
       if (onIndexChange) runOnJS(onIndexChange)(idx);
     },
   });
+  
 
   useEffect(() => {
     if (slides.length === 0) return;
-
+  
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
-    setCurrentSlideIndex(safeIndex);
-
+  
+    if (!didInitRef.current) {
+      didInitRef.current = true;
+      setCurrentSlideIndex(safeIndex);
+      requestAnimationFrame(() => {
+        // Инициализируем позицию только один раз
+        scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides.length, initialIndex]); // ← height здесь больше НЕ нужен
+  
+  useEffect(() => {
+    if (!slides.length) return;
     requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
+      scrollRef.current?.scrollTo({ y: currentIndex * height, animated: false });
     });
-  }, [slides, height, initialIndex, setCurrentSlideIndex]);
+  }, [height, slides.length, currentIndex]);
 
+  
   const renderSlide = (slide: Slide, index: number) => {
     const isActive = index === currentIndex;
     const key = `${slide.id}-${index}`;
