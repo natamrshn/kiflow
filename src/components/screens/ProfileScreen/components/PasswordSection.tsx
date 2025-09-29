@@ -89,7 +89,7 @@ export default function PasswordSection() {
           textStyle={styles.buttonText}
         />
       ) : (
-        <VStack space="md">
+        <VStack space="md" style={styles.fieldsContainer}>
           <ProfileField
             label="Поточний пароль"
             value={passwordData.currentPassword}
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: Colors.gray[800],
-    marginBottom: 8,
+    marginBottom: 16,
   },
   changePasswordButton: {
     marginTop: 16,
@@ -178,6 +178,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 16,
+  },
+  fieldsContainer: {
+    marginTop: 20,
   },
   saveButton: {
     marginBottom: 8,

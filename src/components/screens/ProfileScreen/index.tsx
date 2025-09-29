@@ -9,7 +9,7 @@ import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 // Імпорт компонентів
 import ActionButtons from './components/ActionButtons';
-// import AvatarSection from './components/AvatarSection';
+import AvatarSection from './components/AvatarSection';
 import LoadingState from './components/LoadingState';
 import PasswordSection from './components/PasswordSection';
 import SignOutSection from './components/SignOutSection';
@@ -146,11 +146,9 @@ export default function ProfileScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         <View  style={styles.content}>
-          {/* <AvatarSection
-            avatarUrl={formData.avatar_url}
-            editMode={editMode}
-            onAvatarUrlChange={(url) => handleFormDataChange('avatar_url', url)}
-          /> */}
+          <AvatarSection
+            fullName={formData.full_name || user?.full_name || ''}
+          />
           <UserInfoSection
             user={user}
             formData={formData}
