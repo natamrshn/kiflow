@@ -1,13 +1,19 @@
 import { Slide } from "@/src/constants/types/slides";
 import { useSlidesStore } from "@/src/stores";
 import React, { useEffect, useMemo, useRef } from "react";
-import { StyleSheet, View, useWindowDimensions } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import Animated, {
   runOnJS,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
 import AICourseChat from "./slides/AICourseChat/AiCourseChat";
 import ContentWithExample from "./slides/ContentWithExample";
+import DashboardSlide from "./slides/DashboardSlide";
 import MediaPlaceholder from "./slides/MediaPlaceholder";
 import QuizSlide from "./slides/QuizeSlide";
 import TextSlide from "./slides/TextSlide";
@@ -34,16 +40,22 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
     setCurrentSlideIndex,
   } = useSlidesStore();
 
+  const PAGE_H = Dimensions.get("screen").height;
+
   const slides = useMemo(
     () => (storeSlides.length > 0 ? storeSlides : propSlides || []),
     [storeSlides, propSlides]
   );
+
   const totalSlides = propTotalSlides || slides.length;
   const currentIndex = currentSlideIndex;
 
+  const didInitRef = useRef(false);
+
   const onScroll = useAnimatedScrollHandler({
     onScroll: (event) => {
-      const idx = Math.round(event.contentOffset.y / height);
+      const viewH = event.layoutMeasurement?.height || PAGE_H;
+      const idx = Math.round(event.contentOffset.y / viewH);
       runOnJS(setCurrentSlideIndex)(idx);
       if (onIndexChange) runOnJS(onIndexChange)(idx);
     },
@@ -53,12 +65,26 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
     if (slides.length === 0) return;
 
     const safeIndex = Math.min(Math.max(0, initialIndex), slides.length - 1);
-    setCurrentSlideIndex(safeIndex);
 
+    if (!didInitRef.current) {
+      didInitRef.current = true;
+      setCurrentSlideIndex(safeIndex);
+      requestAnimationFrame(() => {
+        scrollRef.current?.scrollTo({ y: safeIndex * PAGE_H, animated: false });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides.length, initialIndex]);
+
+  useEffect(() => {
+    if (!slides.length) return;
     requestAnimationFrame(() => {
-      scrollRef.current?.scrollTo({ y: safeIndex * height, animated: false });
+      scrollRef.current?.scrollTo({
+        y: currentIndex * PAGE_H,
+        animated: false,
+      });
     });
-  }, [slides, height, initialIndex, setCurrentSlideIndex]);
+  }, [currentIndex, slides.length]);
 
   const renderSlide = (slide: Slide, index: number) => {
     const isActive = index === currentIndex;
@@ -102,11 +128,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
       case "ai":
         return (
           <View key={key} style={{ width, height }}>
-            <AICourseChat
-              title={slide.slide_title}
-              slideId={slide.id}
-
-            />
+            <AICourseChat title={slide.slide_title} slideId={slide.id} />
           </View>
         );
 
@@ -119,6 +141,13 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
               tips={slide.slide_data.tips}
               example={slide.slide_data.example}
             />
+          </View>
+        );
+
+      case "dashboard":
+        return (
+          <View key={key} style={{ width, height }}>
+            <DashboardSlide title={slide.slide_title} />
           </View>
         );
 
@@ -150,6 +179,7 @@ const CourseSwiper: React.FC<CourseSwiperProps> = ({
         onScroll={onScroll}
         scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={false}
       >
         {slides.map((s, i) => renderSlide(s, i))}
       </Animated.ScrollView>

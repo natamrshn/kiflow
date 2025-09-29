@@ -105,7 +105,6 @@ export const useAuthStore = create<AuthState>()(
 
           // Якщо сесії не існує, повертаємо успіх без спроби виходу
           if (!sessionData?.session) {
-            console.log('No active session found during logout');
             set({ 
               user: null, 
               session: null, 
@@ -185,18 +184,11 @@ export const useAuthStore = create<AuthState>()(
       },
 
       checkSession: async () => {
-        console.log('🔵 AuthStore: checkSession called');
         set({ isLoading: true, error: null });
         try {
           const { data, error } = await supabase.auth.getSession();
           if (error) throw error;
-          
           const isGuest = !data.session || !data.session.user || data.session.user.is_anonymous;
-          console.log('🔵 AuthStore: Session check result:', { 
-            hasSession: !!data.session, 
-            hasUser: !!data.session?.user, 
-            isGuest 
-          });
           
           set({ 
             user: data.session?.user || null, 
@@ -279,16 +271,13 @@ export const useAuthStore = create<AuthState>()(
 
 // Ініціалізуємо слухача стану автентифікації
 supabase.auth.onAuthStateChange((event, session) => {
-  console.log('🔵 AuthStore: Auth state changed:', { event, hasSession: !!session });
   const { setUser, setSession, setLoading } = useAuthStore.getState();
   
   if (session && session.user && !session.user.is_anonymous) {
-    console.log('🔵 AuthStore: User authenticated');
     setUser(session.user);
     setSession(session);
     useAuthStore.setState({ isGuest: false });
   } else {
-    console.log('🔵 AuthStore: User is guest');
     setUser(null);
     setSession(null);
     useAuthStore.setState({ isGuest: true });

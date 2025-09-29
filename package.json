@@ -21,8 +21,9 @@
     "@gluestack-ui/icon": "^0.1.27",
     "@gluestack-ui/image": "^0.1.17",
     "@gluestack-ui/input": "^0.1.38",
-    "@gluestack-ui/nativewind-utils": "^1.0.28",
+    "@gluestack-ui/nativewind-utils": "^1.0.8",
     "@gluestack-ui/textarea": "^0.1.25",
+    "@google/generative-ai": "^0.24.1",
     "@mux/mux-player": "^3.3.4",
     "@mux/mux-player-react": "^3.3.4",
     "@react-native-async-storage/async-storage": "^2.2.0",
@@ -54,11 +55,16 @@
     "react-native-reanimated": "~4.1.0",
     "react-native-safe-area-context": "~5.6.0",
     "react-native-screens": "~4.16.0",
-    "react-native-svg": "15.12.1",
+    "react-native-svg": "^15.12.1",
     "react-native-web": "^0.21.0",
     "react-native-webview": "13.15.0",
     "zustand": "^5.0.8",
     "expo-image-picker": "~17.0.8"
+    "recharts": "^3.2.1",
+    "uuid": "^13.0.0",
+    "victory-native": "^41.20.1",
+    "zustand": "^5.0.8"
+
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

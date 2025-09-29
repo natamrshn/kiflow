@@ -1,9 +1,14 @@
 import { Icon } from '@/src/components/ui/icon';
+import { saveUserRating } from '@/src/services/main_rating';
 import { usePromptsStore } from '@/src/services/slidePrompt';
+import { useAuthStore, useCourseStore, useCriteriaStore, useModulesStore } from '@/src/stores';
 import { MessageCircle, Send } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Dimensions, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { askGemini } from './askGemini';
+import AudioRecorder from './AudioRecorder';
+import { formatAIResponseForChat } from './formatAIResponseForChat';
 
 interface Message {
   id: string;
@@ -22,8 +27,46 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-
   const { prompt, fetchPromptBySlide } = usePromptsStore();
+  const { criterias, isLoading, fetchCriterias } = useCriteriaStore();
+  const courseId = useCourseStore((state) => state.currentCourse?.id);
+  const { user } = useAuthStore();
+
+  const inputRef = useRef<TextInput>(null);
+  const pageScrollLockedRef = useRef(false);
+
+  const lockPageScroll = () => {
+    if (Platform.OS !== 'web' || pageScrollLockedRef.current) return;
+    const y = window.scrollY || 0;
+    (document.body as any).dataset.lockScrollY = String(y);
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${y}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+    pageScrollLockedRef.current = true;
+  };
+
+  const unlockPageScroll = () => {
+    if (Platform.OS !== 'web' || !pageScrollLockedRef.current) return;
+    const y = Number((document.body as any).dataset.lockScrollY || 0);
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    delete (document.body as any).dataset.lockScrollY;
+    pageScrollLockedRef.current = false;
+    window.scrollTo(0, y);
+  };
+
+  useEffect(() => {
+    return () => {
+      unlockPageScroll();
+    };
+  }, []);
 
   useEffect(() => {
     if (slideId) {
@@ -33,15 +76,13 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
 
   useEffect(() => {
     const loadInitialPrompt = async () => {
-      const slidePrompt = prompt[slideId]?.prompt;
+      const slidePrompt = prompt[slideId]?.question;
       if (!slidePrompt) return;
-
-      const aiResponse = await askGemini(messages, slidePrompt, messages.length === 0);
 
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
-        text: aiResponse,
+        text: slidePrompt,
       };
 
       setMessages([aiMsg]);
@@ -50,27 +91,56 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
     loadInitialPrompt();
   }, [slideId, prompt]);
 
-  
+  useEffect(() => {
+    if (courseId) fetchCriterias(courseId);
+  }, [courseId, fetchCriterias]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-  
+
     const userMsg: Message = { id: Date.now().toString(), role: 'user', text: input.trim() };
-    setMessages((prev) => [...prev, userMsg]); // оновлюємо стан
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setLoading(true);
-  
+
     try {
-      const slidePrompt = prompt[slideId]?.prompt || "";
-  
-      const aiResponse = await askGemini([...messages, userMsg], slidePrompt, messages.length === 0);
-  
+      const slidePrompt = prompt[slideId]?.prompt || '';
+      const criteriasText = criterias
+        .map((item) => `${item.key} - ${item.name.trim()}`)
+        .join('\n');
+
+      const aiResponse = await askGemini(
+        [...messages, userMsg],
+        slidePrompt,
+        messages.length === 0,
+        criteriasText
+      );
+
+      const currentModuleId = useModulesStore.getState().currentModule?.id;
+
+      if (user && aiResponse.rating?.criteriaScores && currentModuleId) {
+        const criteriaScores = aiResponse.rating.criteriaScores;
+        for (const [criteriaKey, score] of Object.entries(criteriaScores)) {
+          try {
+            await saveUserRating(
+              user.id,
+              score as number,
+              currentModuleId,
+              criteriaKey
+            );
+          } catch (err) {
+            console.warn(`Failed to save rating for ${criteriaKey}:`, err);
+          }
+        }
+      }
+
+      const chatText = formatAIResponseForChat(aiResponse);
       const aiMsg: Message = {
         id: Date.now().toString(),
         role: 'ai',
-        text: aiResponse,
+        text: chatText,
       };
-  
+
       setMessages((prev) => [...prev, aiMsg]);
     } catch (e) {
       console.error(e);
@@ -78,10 +148,31 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
       setLoading(false);
     }
   };
-  
+
+  const handleAudioProcessed = (transcribedText: string) => {
+    if (transcribedText.trim()) {
+      setInput(transcribedText.trim());
+    }
+  };
+
+  const handleFocus = () => {
+    lockPageScroll();
+
+    if (Platform.OS === 'web') {
+      setTimeout(() => {
+        try {
+          (inputRef.current as any)?.focus?.({ preventScroll: true });
+        } catch {}
+      }, 0);
+    }
+  };
+
+  const handleBlur = () => {
+    unlockPageScroll();
+  };
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{title}</Text>
       </View>
@@ -90,6 +181,7 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
         <ScrollView
           contentContainerStyle={styles.chatContent}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
           {messages.map((msg) => (
             <View
@@ -115,17 +207,27 @@ const AICourseChat: React.FC<AICourseChatProps> = ({ title, slideId }) => {
 
       <View style={styles.footer}>
         <TextInput
+          ref={inputRef}
           style={styles.input}
           placeholder="Введіть відповідь..."
           value={input}
           onChangeText={setInput}
           multiline
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          inputMode="text"
         />
-        <TouchableOpacity onPress={handleSend} disabled={loading}>
-          <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <AudioRecorder
+            onAudioProcessed={handleAudioProcessed}
+            disabled={loading}
+          />
+          <TouchableOpacity onPress={handleSend} disabled={loading}>
+            <Icon as={Send} size={24} color={loading ? '#94a3b8' : '#0f172a'} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -163,9 +265,12 @@ const styles = StyleSheet.create({
   userBubble: { backgroundColor: '#f1f5f9', alignSelf: 'flex-end' },
   messageIcon: { marginRight: 6 },
   messageText: { fontSize: 16, color: '#0f172a', lineHeight: 22 },
-  footer: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingTop: 8 },
+  footer: { 
+    paddingTop: 8,
+    paddingBottom: Platform.OS === 'web' ? 60 : 8,
+    marginBottom: Platform.OS === 'web' ? 20 : 0,
+  },
   input: {
-    flex: 1,
     minHeight: 40,
     maxHeight: 100,
     borderRadius: 12,
@@ -175,6 +280,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     backgroundColor: '#fff',
-    marginRight: 8,
+    marginBottom: 8,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 8,
   },
 });
